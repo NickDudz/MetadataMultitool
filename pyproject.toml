@@ -32,10 +32,14 @@ dev = [
     "mypy>=1.0.0",
     "pre-commit>=3.0.0",
     "tox>=4.0.0",
+    "PyQt6-stubs>=1.0.0",
+    "types-PyYAML",
+    "types-tqdm",
+    "types-psutil",
+    "types-colorama",
 ]
 gui = [
-    "PyQt6>=6.0.0",
-    "PyQt6-tools>=6.0.0",
+    "PyQt6>=6.4.0,<7.0.0",
 ]
 
 [tool.pytest.ini_options]
