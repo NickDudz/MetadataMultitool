@@ -233,7 +233,7 @@ def handle_poison_workflow(config: Dict[str, Any]) -> None:
     html = get_yes_no("Write .html snippet files? (y/n): ", default=False)
     
     # Get rename pattern
-    rename_pattern = input(f"{Fore.GREEN}Rename pattern (optional, e.g., '{stem}_toaster'): {Style.RESET_ALL}").strip()
+    rename_pattern = input(f"{Fore.GREEN}Rename pattern (optional, e.g., '{{stem}}_toaster'): {Style.RESET_ALL}").strip()
     
     # Get CSV mapping
     csv_path = input(f"{Fore.GREEN}CSV mapping file (optional): {Style.RESET_ALL}").strip()
