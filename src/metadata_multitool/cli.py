@@ -504,6 +504,18 @@ def cmd_revert(args: argparse.Namespace) -> int:
     try:
         p = Path(args.path)
         base = p if p.is_dir() else p.parent
+        
+        # Load config for dry-run support
+        config = load_config()
+        dry_run = getattr(args, 'dry_run', False)
+        quiet = get_config_value(config, 'quiet', False)
+        
+        if dry_run:
+            if not quiet:
+                print(f"{Fore.CYAN}DRY RUN: Would revert operations in {base}...{Style.RESET_ALL}")
+            # TODO: Implement dry-run preview for revert
+            return 0
+        
         removed = revert_dir(base)
         print(
             f"{Fore.CYAN}Reverted. Removed {removed} sidecar/aux files and cleared fields.{Style.RESET_ALL}"
@@ -579,6 +591,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-metadata", action="store_true", help="Include only files without metadata"
     )
     pc.add_argument(
+        "--dry-run", action="store_true", help="Preview operations without making changes"
+    )
+    pc.add_argument(
         "--backup", action="store_true", help="Create backup before processing"
     )
     pc.add_argument(
@@ -651,6 +666,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     pr = sub.add_parser("revert", help="Undo Multitool outputs in a directory")
     pr.add_argument("path", help="Directory or one file within it")
+    pr.add_argument(
+        "--dry-run", action="store_true", help="Preview operations without making changes"
+    )
     pr.set_defaults(func=cmd_revert)
 
     pi = sub.add_parser("interactive", help="Interactive mode for guided workflows")

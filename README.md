@@ -7,6 +7,7 @@ Local-first toolkit to **clean**, **manage**, and (optionally) **poison** image 
 - ✍️ **Edit/Preserve** — foundation for selective field edits (future UI).
 - 🧪 **Optional Label Poisoning** — add misleading captions/sidecars, filename patterns, and HTML snippets to degrade scraped training labels. Off by default.
 - ↩️ **Revert** — undo sidecars/fields/renames using a per-dir log.
+- 🚀 **v0.4.0 New**: Professional PyQt6 GUI, batch processing, dry-run mode, advanced configuration
 
 > **Ethics**: Mislabeling harms accessibility and may violate platform rules. Keep this optional. Prefer **Clean** for most users.
 
@@ -38,6 +39,31 @@ mm revert ./samples
 - `revert` — remove created sidecars, clear fields we wrote, and restore prior names when possible.
 - `interactive` — guided workflow mode for step-by-step operations.
 - `gui` — launch legacy Tkinter graphical user interface.
+
+## v0.4.0 New Features
+
+### 🎯 Professional PyQt6 GUI
+- Modern desktop interface with native OS integration
+- Light/dark themes with professional styling
+- Real-time progress tracking with ETA display
+- Comprehensive file management and operation panels
+
+### ⚡ Enhanced Performance
+- **Batch Processing**: Parallel processing for large file sets (1000+ images)
+- **Memory Management**: Configurable memory limits and usage monitoring
+- **Progress Tracking**: Real-time ETA and performance metrics
+- **Dry-Run Mode**: Preview operations before execution (`--dry-run`)
+
+### 🔧 Advanced Configuration
+- **YAML Config**: `.mm_config.yaml` for persistent settings
+- **GUI Settings**: Theme, window size, and behavior preferences
+- **Performance Tuning**: Batch size, worker count, memory limits
+- **Auto-Discovery**: Config files found in directory hierarchy
+
+### 🛠️ Improved Error Handling
+- **Contextual Messages**: Detailed error descriptions with suggestions
+- **Troubleshooting**: Actionable guidance for common issues
+- **Validation**: Input validation with clear feedback
 
 ## GUI Interfaces
 

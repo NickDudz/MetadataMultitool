@@ -13,9 +13,16 @@ from PyQt6.QtGui import QIcon
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from .main_window import MainWindow
-from .utils.icons import IconManager
-from .views.common.theme_manager import ThemeManager
+# Handle both module and script execution
+try:
+    from .main_window import MainWindow
+    from .utils.icons import IconManager
+    from .views.common.theme_manager import ThemeManager
+except ImportError:
+    # If relative imports fail, try absolute imports
+    from metadata_multitool.gui_qt.main_window import MainWindow
+    from metadata_multitool.gui_qt.utils.icons import IconManager
+    from metadata_multitool.gui_qt.views.common.theme_manager import ThemeManager
 
 
 class MetadataMultitoolApp(QApplication):

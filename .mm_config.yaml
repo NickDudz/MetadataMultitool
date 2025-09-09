@@ -1,53 +1,38 @@
-advanced:
-  enable_debug_logging: false
-  exiftool_path: ''
-  temp_directory: ''
-backup_before_operations: true
+# Metadata Multitool Configuration
+# This file contains default settings for the Metadata Multitool
+
+# Processing settings
 batch_size: 100
-exiftool_path: null
-general:
-  backup_before_operations: true
-  batch_size: 100
-  log_level: INFO
-  max_workers: 4
-gui_settings:
-  auto_backup: true
-  auto_save_settings: true
-  remember_last_folder: true
-  show_thumbnails: true
-  theme: dark
-  thumbnail_size: 64
-  window_position:
-  - 668
-  - 185
-  window_size:
-  - 1000
-  - 700
-log_level: INFO
 max_workers: 4
-operation_defaults:
-  clean:
-    output_folder: safe_upload
-    preserve_structure: true
-  poison:
-    output_formats:
-      exif: false
-      html: false
-      iptc: true
-      json: true
-      sidecar: true
-      xmp: true
-    preset: label_flip
-    true_hint: ''
 progress_bar: true
-quiet: false
-supported_formats:
-- .jpg
-- .jpeg
-- .png
-- .tif
-- .tiff
-- .webp
-- .bmp
-temp_dir: null
+
+# Output settings
 verbose: false
+quiet: false
+log_level: INFO
+
+# Safety settings
+backup_before_operations: true
+
+# Supported file formats
+supported_formats:
+  - .jpg
+  - .jpeg
+  - .png
+  - .tif
+  - .tiff
+  - .webp
+  - .bmp
+
+# External tools
+exiftool_path: null  # Auto-detect if null
+temp_dir: null       # Use system temp if null
+
+# GUI settings
+gui_theme: light
+gui_window_size: [1200, 800]
+gui_remember_settings: true
+
+# Advanced settings
+memory_limit_mb: 1024
+max_file_size_mb: 500
