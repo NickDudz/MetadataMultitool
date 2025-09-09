@@ -86,7 +86,7 @@ class MainWindow(QMainWindow):
         
     def _setup_window(self) -> None:
         """Setup main window properties."""
-        self.setWindowTitle("Metadata Multitool v0.3.0")
+        self.setWindowTitle("Metadata Multitool v0.4.0")
         self.setMinimumSize(1000, 700)
         self.resize(1200, 800)
         
@@ -389,7 +389,7 @@ class MainWindow(QMainWindow):
     def _show_about(self) -> None:
         """Show about dialog."""
         about_text = """
-<h2>Metadata Multitool v0.3.0</h2>
+<h2>Metadata Multitool v0.4.0</h2>
 <p>A privacy-focused tool for managing image metadata.</p>
 <p>Built with PyQt6 for modern desktop experience.</p>
 <p><a href="https://github.com/yourusername/metadata-multitool">GitHub Repository</a></p>
