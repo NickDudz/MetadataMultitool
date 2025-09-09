@@ -35,7 +35,9 @@ class LogError(MetadataMultitoolError):
 class ProcessingError(MetadataMultitoolError):
     """Raised when file processing fails."""
 
-    def __init__(self, message: str, file_path: str = None, original_error: Exception = None):
+    def __init__(
+        self, message: str, file_path: str = None, original_error: Exception = None
+    ):
         super().__init__(message)
         self.file_path = file_path
         self.original_error = original_error
@@ -208,81 +210,95 @@ def rel_to_root(target: Path, root: Path) -> str:
 def format_error_message(error: Exception, context: str = None) -> str:
     """
     Format error message with context and suggestions.
-    
+
     Args:
         error: The exception that occurred
         context: Additional context about where the error occurred
-        
+
     Returns:
         Formatted error message with suggestions
     """
     error_type = type(error).__name__
     error_msg = str(error)
-    
+
     # Base error message
     if context:
         message = f"Error in {context}: {error_msg}"
     else:
         message = f"{error_type}: {error_msg}"
-    
+
     # Add specific suggestions based on error type
     suggestions = []
-    
+
     if isinstance(error, InvalidPathError):
-        suggestions.extend([
-            "• Check if the file or directory exists",
-            "• Verify the path is correct and accessible",
-            "• Ensure you have permission to access the location"
-        ])
+        suggestions.extend(
+            [
+                "• Check if the file or directory exists",
+                "• Verify the path is correct and accessible",
+                "• Ensure you have permission to access the location",
+            ]
+        )
     elif isinstance(error, PermissionError):
-        suggestions.extend([
-            "• Check file permissions",
-            "• Try running as administrator (Windows) or with sudo (Linux/macOS)",
-            "• Ensure the file is not open in another application"
-        ])
+        suggestions.extend(
+            [
+                "• Check file permissions",
+                "• Try running as administrator (Windows) or with sudo (Linux/macOS)",
+                "• Ensure the file is not open in another application",
+            ]
+        )
     elif isinstance(error, ProcessingError):
-        suggestions.extend([
-            "• Check if the file is corrupted",
-            "• Verify the file format is supported",
-            "• Try processing a smaller batch of files"
-        ])
+        suggestions.extend(
+            [
+                "• Check if the file is corrupted",
+                "• Verify the file format is supported",
+                "• Try processing a smaller batch of files",
+            ]
+        )
     elif isinstance(error, ConfigurationError):
-        suggestions.extend([
-            "• Check the configuration file syntax",
-            "• Verify all required settings are present",
-            "• Try using default configuration"
-        ])
+        suggestions.extend(
+            [
+                "• Check the configuration file syntax",
+                "• Verify all required settings are present",
+                "• Try using default configuration",
+            ]
+        )
     elif isinstance(error, ValidationError):
-        suggestions.extend([
-            "• Check the input values",
-            "• Verify the format of the data",
-            "• Refer to the documentation for valid values"
-        ])
-    
+        suggestions.extend(
+            [
+                "• Check the input values",
+                "• Verify the format of the data",
+                "• Refer to the documentation for valid values",
+            ]
+        )
+
     # Add general suggestions
     if not suggestions:
-        suggestions.extend([
-            "• Check the documentation for troubleshooting",
-            "• Verify all dependencies are installed",
-            "• Try with a smaller dataset first"
-        ])
-    
+        suggestions.extend(
+            [
+                "• Check the documentation for troubleshooting",
+                "• Verify all dependencies are installed",
+                "• Try with a smaller dataset first",
+            ]
+        )
+
     # Combine message and suggestions
     if suggestions:
         message += "\n\nSuggestions:\n" + "\n".join(suggestions)
-    
+
     return message
 
 
-def handle_error(error: Exception, context: str = None, show_suggestions: bool = True) -> str:
+def handle_error(
+    error: Exception, context: str = None, show_suggestions: bool = True
+) -> str:
     """
     Handle an error and return a formatted message.
-    
+
     Args:
         error: The exception that occurred
         context: Additional context about where the error occurred
         show_suggestions: Whether to include suggestions in the message
-        
+
     Returns:
         Formatted error message
     """

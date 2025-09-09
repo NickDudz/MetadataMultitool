@@ -9,9 +9,9 @@ from .progress_view import ProgressView
 
 __all__ = [
     "CleanView",
-    "PoisonView", 
+    "PoisonView",
     "RevertView",
     "SettingsView",
     "FileListView",
-    "ProgressView"
+    "ProgressView",
 ]

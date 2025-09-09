@@ -59,7 +59,7 @@ def process_batch(
 
     # Determine number of workers (don't exceed available CPUs or item count)
     workers = min(max_workers, mp.cpu_count(), total)
-    
+
     if workers <= 1:
         # Single-threaded processing
         return _process_sequential(
@@ -67,8 +67,8 @@ def process_batch(
         )
 
     # Create batches
-    batches = [items[i:i + batch_size] for i in range(0, total, batch_size)]
-    
+    batches = [items[i : i + batch_size] for i in range(0, total, batch_size)]
+
     try:
         with ProcessPoolExecutor(max_workers=workers) as executor:
             # Submit all batches
@@ -88,17 +88,21 @@ def process_batch(
                             successful += batch_successful
                             errors.extend(batch_errors)
                             pbar.update(len(batch))
-                            
+
                             # Update progress bar with ETA if enabled
                             if show_eta and successful > 0:
                                 eta = calculate_eta(successful, total, start_time)
                                 if eta:
-                                    pbar.set_postfix(eta=eta, memory=f"{get_memory_usage():.1f}MB")
-                                    
+                                    pbar.set_postfix(
+                                        eta=eta, memory=f"{get_memory_usage():.1f}MB"
+                                    )
+
                             # Check memory limit
                             if not check_memory_limit(memory_limit_mb):
-                                errors.append(f"Memory limit exceeded ({memory_limit_mb}MB)")
-                                
+                                errors.append(
+                                    f"Memory limit exceeded ({memory_limit_mb}MB)"
+                                )
+
                         except Exception as e:
                             errors.append(f"Batch processing error: {e}")
                             pbar.update(len(batch))
@@ -178,9 +182,9 @@ def _process_batch_worker(
 
 
 def estimate_processing_time(
-    items: List[Path], 
+    items: List[Path],
     sample_size: int = 10,
-    process_func: Optional[Callable[[Path], Tuple[bool, str]]] = None
+    process_func: Optional[Callable[[Path], Tuple[bool, str]]] = None,
 ) -> Optional[float]:
     """
     Estimate processing time by sampling a few items.
@@ -196,11 +200,11 @@ def estimate_processing_time(
     if len(items) < 2:
         return None
 
-    sample_items = items[:min(sample_size, len(items))]
-    
+    sample_items = items[: min(sample_size, len(items))]
+
     try:
         start_time = time.time()
-        
+
         if process_func:
             # Use actual processing function for accurate timing
             for item in sample_items:
@@ -215,16 +219,16 @@ def estimate_processing_time(
                 if item.exists():
                     size_mb = item.stat().st_size / (1024 * 1024)
                     # More realistic estimation based on file size and type
-                    if item.suffix.lower() in ['.tiff', '.tif']:
+                    if item.suffix.lower() in [".tiff", ".tif"]:
                         # TIFF files are typically slower to process
                         time.sleep(min(0.02, size_mb * 0.002))
-                    elif item.suffix.lower() in ['.jpg', '.jpeg']:
+                    elif item.suffix.lower() in [".jpg", ".jpeg"]:
                         # JPEG files are typically faster
                         time.sleep(min(0.005, size_mb * 0.0005))
                     else:
                         # Other formats
                         time.sleep(min(0.01, size_mb * 0.001))
-        
+
         elapsed = time.time() - start_time
         return elapsed / len(sample_items)
     except Exception:
@@ -253,12 +257,13 @@ def get_optimal_batch_size(total_items: int, max_workers: int = 4) -> int:
 def get_memory_usage() -> float:
     """
     Get current memory usage in MB.
-    
+
     Returns:
         Memory usage in MB
     """
     try:
         import psutil
+
         process = psutil.Process()
         return process.memory_info().rss / 1024 / 1024
     except ImportError:
@@ -269,10 +274,10 @@ def get_memory_usage() -> float:
 def check_memory_limit(memory_limit_mb: float = 1024) -> bool:
     """
     Check if current memory usage is within limits.
-    
+
     Args:
         memory_limit_mb: Memory limit in MB
-        
+
     Returns:
         True if within limits, False otherwise
     """
@@ -283,10 +288,10 @@ def check_memory_limit(memory_limit_mb: float = 1024) -> bool:
 def format_time_remaining(seconds: float) -> str:
     """
     Format time remaining in a human-readable format.
-    
+
     Args:
         seconds: Time in seconds
-        
+
     Returns:
         Formatted time string
     """
@@ -305,24 +310,24 @@ def format_time_remaining(seconds: float) -> str:
 def calculate_eta(processed: int, total: int, start_time: float) -> Optional[str]:
     """
     Calculate estimated time of arrival.
-    
+
     Args:
         processed: Number of items processed
         total: Total number of items
         start_time: Start time of processing
-        
+
     Returns:
         Formatted ETA string or None if cannot calculate
     """
     if processed <= 0:
         return None
-        
+
     elapsed = time.time() - start_time
     rate = processed / elapsed
     remaining = total - processed
-    
+
     if rate <= 0:
         return None
-        
+
     eta_seconds = remaining / rate
     return format_time_remaining(eta_seconds)

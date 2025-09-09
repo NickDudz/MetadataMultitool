@@ -145,8 +145,9 @@ def test_poison_command_metadata_surfaces(tmp_path: Path) -> None:
     # Verify that the log was created with the correct metadata surfaces
     log_file = tmp_path / ".mm_poisonlog.json"
     assert log_file.exists()
-    
+
     import json
+
     log_data = json.loads(log_file.read_text(encoding="utf-8"))
     entry = log_data["entries"]["test.jpg"]
     assert entry["surfaces"]["xmp"] is True

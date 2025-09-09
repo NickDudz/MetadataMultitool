@@ -8,81 +8,81 @@ from PyQt6.QtWidgets import QApplication
 
 class ThemeManager(QObject):
     """Manages application themes and styling."""
-    
+
     theme_changed = pyqtSignal(str)  # theme_name
-    
+
     def __init__(self):
         super().__init__()
         self.current_theme = "light"
         self.themes: Dict[str, str] = {}
-        
+
         # Initialize theme paths
         self._initialize_themes()
-        
+
     def _initialize_themes(self) -> None:
         """Initialize available themes."""
         resources_dir = Path(__file__).parent.parent.parent / "resources" / "styles"
-        
+
         self.themes = {
             "light": str(resources_dir / "light_theme.qss"),
-            "dark": str(resources_dir / "dark_theme.qss")
+            "dark": str(resources_dir / "dark_theme.qss"),
         }
-        
+
     def get_available_themes(self) -> list[str]:
         """Get list of available theme names."""
         return list(self.themes.keys())
-        
+
     def get_current_theme(self) -> str:
         """Get current theme name."""
         return self.current_theme
-        
+
     def apply_theme(self, theme_name: str) -> bool:
         """Apply a theme to the application."""
         if theme_name not in self.themes:
             print(f"Theme '{theme_name}' not found")
             return False
-            
+
         theme_path = Path(self.themes[theme_name])
-        
+
         # Load stylesheet
         stylesheet = self._load_stylesheet(theme_path)
         if stylesheet is None:
             # Fall back to default styling if theme file doesn't exist
             stylesheet = self._get_default_stylesheet(theme_name)
-            
+
         # Apply to application
         app = QApplication.instance()
         if app:
             app.setStyleSheet(stylesheet)
-            
+
         # Update current theme
         old_theme = self.current_theme
         self.current_theme = theme_name
-        
+
         # Emit signal if theme changed
         if old_theme != theme_name:
             self.theme_changed.emit(theme_name)
-            
+
         return True
-        
+
     def _load_stylesheet(self, theme_path: Path) -> Optional[str]:
         """Load stylesheet from file."""
         try:
             if theme_path.exists():
-                with open(theme_path, 'r', encoding='utf-8') as f:
+                with open(theme_path, "r", encoding="utf-8") as f:
                     return f.read()
         except Exception as e:
             print(f"Error loading theme file {theme_path}: {e}")
-            
+
         return None
-        
+
     def _get_default_stylesheet(self, theme_name: str) -> str:
         """Get default stylesheet for theme."""
         if theme_name == "dark":
             return self._get_dark_theme_default()
         else:
             return self._get_light_theme_default()
-            
+
     def _get_light_theme_default(self) -> str:
         """Default light theme stylesheet."""
         return """

@@ -8,6 +8,6 @@ from .settings_controller import SettingsController
 __all__ = [
     "CleanController",
     "PoisonController",
-    "RevertController", 
-    "SettingsController"
+    "RevertController",
+    "SettingsController",
 ]

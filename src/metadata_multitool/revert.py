@@ -10,12 +10,12 @@ from .exif import has_exiftool, run_exiftool
 def revert_dir(dirpath: Path) -> int:
     log = read_log(dirpath)
     removed = 0
-    
+
     # Process all entries
     for rel, entry in list(log.get("entries", {}).items()):
         p = dirpath / rel
         orig = entry.get("original_name")
-        
+
         # First, remove sidecars and clear fields for the current file
         if p.exists():
             # sidecars
@@ -38,7 +38,7 @@ def revert_dir(dirpath: Path) -> int:
                         str(p),
                     ]
                 )
-        
+
         # Then rename if needed
         if orig and p.exists() and p.name != orig:
             target = p.with_name(orig)
