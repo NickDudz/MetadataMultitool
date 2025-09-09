@@ -31,7 +31,111 @@
       "operation": "clean",
       "created_at": "2025-09-08T16:28:28.391086",
       "size": 1422
+    },
+    "5": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmpj92m46tp",
+      "backup_path": ".mm_backups\\5\\tmpj92m46tp",
+      "operation": "clean",
+      "created_at": "2025-09-09T12:09:44.561404",
+      "size": 633
+    },
+    "6": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmpwnkw4ity",
+      "backup_path": ".mm_backups\\6\\tmpwnkw4ity",
+      "operation": "clean",
+      "created_at": "2025-09-09T12:09:46.657160",
+      "size": 711
+    },
+    "7": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmpwnkw4ity",
+      "backup_path": ".mm_backups\\7\\tmpwnkw4ity",
+      "operation": "clean",
+      "created_at": "2025-09-09T12:09:47.389254",
+      "size": 1422
+    },
+    "8": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmp3c_hv5fq",
+      "backup_path": ".mm_backups\\8\\tmp3c_hv5fq",
+      "operation": "clean",
+      "created_at": "2025-09-09T12:10:22.009374",
+      "size": 633
+    },
+    "9": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmpwozgumih",
+      "backup_path": ".mm_backups\\9\\tmpwozgumih",
+      "operation": "clean",
+      "created_at": "2025-09-09T12:10:24.111134",
+      "size": 711
+    },
+    "10": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmpwozgumih",
+      "backup_path": ".mm_backups\\10\\tmpwozgumih",
+      "operation": "clean",
+      "created_at": "2025-09-09T12:10:24.856251",
+      "size": 1422
+    },
+    "11": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmp8naj0ajn",
+      "backup_path": ".mm_backups\\11\\tmp8naj0ajn",
+      "operation": "clean",
+      "created_at": "2025-09-09T12:20:27.161887",
+      "size": 633
+    },
+    "12": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmpsa6s3xrd",
+      "backup_path": ".mm_backups\\12\\tmpsa6s3xrd",
+      "operation": "clean",
+      "created_at": "2025-09-09T12:20:29.185619",
+      "size": 710
+    },
+    "13": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmpsa6s3xrd",
+      "backup_path": ".mm_backups\\13\\tmpsa6s3xrd",
+      "operation": "clean",
+      "created_at": "2025-09-09T12:20:30.011615",
+      "size": 1420
+    },
+    "14": {
+      "type": "directory",
+      "source_path": "test_images",
+      "backup_path": ".mm_backups\\14\\test_images",
+      "operation": "clean",
+      "created_at": "2025-09-09T13:18:53.211862",
+      "size": 1422
+    },
+    "15": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmp4xrdwe_m",
+      "backup_path": ".mm_backups\\15\\tmp4xrdwe_m",
+      "operation": "clean",
+      "created_at": "2025-09-09T14:05:53.578585",
+      "size": 633
+    },
+    "16": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmpovr9c_52",
+      "backup_path": ".mm_backups\\16\\tmpovr9c_52",
+      "operation": "clean",
+      "created_at": "2025-09-09T14:05:55.582952",
+      "size": 711
+    },
+    "17": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmpovr9c_52",
+      "backup_path": ".mm_backups\\17\\tmpovr9c_52",
+      "operation": "clean",
+      "created_at": "2025-09-09T14:05:56.297119",
+      "size": 1422
     }
   },
-  "next_id": 5
+  "next_id": 18
 }

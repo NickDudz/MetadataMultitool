@@ -1,38 +1,31 @@
-# Metadata Multitool Configuration
-# This file contains default settings for the Metadata Multitool
-
-# Processing settings
-batch_size: 100
-max_workers: 4
-progress_bar: true
-
-# Output settings
-verbose: false
-quiet: false
-log_level: INFO
-
-# Safety settings
 backup_before_operations: true
-
-# Supported file formats
-supported_formats:
-  - .jpg
-  - .jpeg
-  - .png
-  - .tif
-  - .tiff
-  - .webp
-  - .bmp
-
-# External tools
-exiftool_path: null  # Auto-detect if null
-temp_dir: null       # Use system temp if null
-
-# GUI settings
-gui_theme: light
-gui_window_size: [1200, 800]
+batch_size: 100
+exiftool_path: null
 gui_remember_settings: true
-
-# Advanced settings
-memory_limit_mb: 1024
+gui_settings:
+  window_position:
+  - 599
+  - 131
+  window_size:
+  - 1000
+  - 700
+gui_theme: light
+gui_window_size:
+- 1200
+- 800
+log_level: INFO
 max_file_size_mb: 500
+max_workers: 4
+memory_limit_mb: 1024
+progress_bar: true
+quiet: false
+supported_formats:
+- .jpg
+- .jpeg
+- .png
+- .tif
+- .tiff
+- .webp
+- .bmp
+temp_dir: null
+verbose: false

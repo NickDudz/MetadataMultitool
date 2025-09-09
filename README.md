@@ -48,7 +48,7 @@ mm revert ./samples
 - Real-time progress tracking with ETA display
 - Comprehensive file management and operation panels
 
-![Metadata Multitool GUI](https://github.com/NickDudz/MetadataMultitool/raw/main/docs/screenshots/gui-screenshot.png)
+![Metadata Multitool GUI](docs/screenshots/gui-screenshot.png)
 *Professional PyQt6 GUI with dark theme, file management, and operation panels*
 
 ### ⚡ Enhanced Performance

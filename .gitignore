@@ -1,23 +1,65 @@
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.egg-info/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
 dist/
-.build/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
 htmlcov/
 .coverage
 .pytest_cache/
-.DS_Store
-Thumbs.db
-.venv/
-.env
-.exiftool_config
-safe_upload/
+.mypy_cache/
+.dmypy.json
+dmypy.json
 
-# Development documentation
-CLAUDE.md
-GUI_PYQT6_IMPLEMENTATION_PROMPT.md
-GUI_DEVELOPMENT_ROADMAP.md
-GUI_ARCHITECTURE_FORWARD_COMPATIBILITY.md
-NEXT_PHASES_PROMPT.md
+# Test outputs
+test_images/
+safe_upload/
+.mm_operations.log
+.mm_backups/
+.mm_config.yaml
+
+# Temporary files
+*.tmp
+*.temp
+*.log

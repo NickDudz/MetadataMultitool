@@ -1,0 +1,688 @@
+# GUI Architecture: Forward Compatibility Design
+
+## Overview
+
+This document defines the architectural principles and design patterns for the PyQt6 desktop GUI implementation that ensure forward compatibility with the planned web interface. The goal is to maximize code reuse and maintain consistent functionality across both platforms.
+
+## Design Principles
+
+### 1. Service-Oriented Architecture
+
+#### Abstraction Layer Pattern
+Create abstract service interfaces that can be implemented differently for desktop and web platforms:
+
+```python
+from abc import ABC, abstractmethod
+from typing import List, AsyncIterator, Optional
+from dataclasses import dataclass
+from pathlib import Path
+
+# Shared data models
+@dataclass
+class OperationResult:
+    success: bool
+    message: str
+    processed_count: int
+    error_count: int
+    errors: List[str]
+
+@dataclass
+class ProgressUpdate:
+    current: int
+    total: int
+    current_file: Optional[str] = None
+    status: str = "processing"
+
+# Abstract service interfaces
+class FileServiceInterface(ABC):
+    """Abstract interface for file operations."""
+    
+    @abstractmethod
+    async def list_files(self, path: str, filters: dict) -> List[dict]:
+        """List files with metadata."""
+        pass
+        
+    @abstractmethod
+    async def get_file_info(self, path: str) -> dict:
+        """Get detailed file information."""
+        pass
+        
+    @abstractmethod
+    async def validate_files(self, paths: List[str]) -> dict:
+        """Validate file accessibility and format."""
+        pass
+
+class OperationServiceInterface(ABC):
+    """Abstract interface for metadata operations."""
+    
+    @abstractmethod
+    async def execute_clean(
+        self, 
+        files: List[str], 
+        options: dict,
+        progress_callback: Optional[callable] = None
+    ) -> AsyncIterator[OperationResult]:
+        """Execute clean operation with progress updates."""
+        pass
+        
+    @abstractmethod
+    async def execute_poison(
+        self, 
+        files: List[str], 
+        options: dict,
+        progress_callback: Optional[callable] = None
+    ) -> AsyncIterator[OperationResult]:
+        """Execute poison operation with progress updates."""
+        pass
+        
+    @abstractmethod
+    async def execute_revert(
+        self, 
+        directory: str,
+        progress_callback: Optional[callable] = None
+    ) -> AsyncIterator[OperationResult]:
+        """Execute revert operation with progress updates."""
+        pass
+
+class ConfigServiceInterface(ABC):
+    """Abstract interface for configuration management."""
+    
+    @abstractmethod
+    async def load_config(self) -> dict:
+        """Load configuration from storage."""
+        pass
+        
+    @abstractmethod
+    async def save_config(self, config: dict) -> bool:
+        """Save configuration to storage."""
+        pass
+        
+    @abstractmethod
+    async def get_defaults(self) -> dict:
+        """Get default configuration values."""
+        pass
+```
+
+#### Desktop Implementation
+```python
+# Desktop-specific implementations
+class DesktopFileService(FileServiceInterface):
+    """Desktop file service using direct file system access."""
+    
+    def __init__(self, cli_backend):
+        self.cli_backend = cli_backend
+        
+    async def list_files(self, path: str, filters: dict) -> List[dict]:
+        """Implementation using local file system."""
+        from ..core import iter_images
+        # Use existing CLI backend
+        
+class DesktopOperationService(OperationServiceInterface):
+    """Desktop operation service using CLI backend."""
+    
+    def __init__(self, cli_backend):
+        self.cli_backend = cli_backend
+        
+    async def execute_clean(self, files, options, progress_callback=None):
+        """Implementation using existing CLI clean operations."""
+        # Direct integration with clean.py
+        
+class DesktopConfigService(ConfigServiceInterface):
+    """Desktop config service using local YAML files."""
+    
+    async def load_config(self) -> dict:
+        """Load from .mm_config.yaml."""
+        from ..config import load_config
+        return load_config()
+```
+
+#### Web Implementation (Future)
+```python
+# Web-specific implementations
+class WebFileService(FileServiceInterface):
+    """Web file service using API calls."""
+    
+    def __init__(self, api_client):
+        self.api_client = api_client
+        
+    async def list_files(self, path: str, filters: dict) -> List[dict]:
+        """Implementation using REST API."""
+        response = await self.api_client.get(f"/api/files", params={"path": path, **filters})
+        return response.json()
+        
+class WebOperationService(OperationServiceInterface):
+    """Web operation service using API calls and WebSockets."""
+    
+    def __init__(self, api_client, websocket_client):
+        self.api_client = api_client
+        self.websocket = websocket_client
+        
+    async def execute_clean(self, files, options, progress_callback=None):
+        """Implementation using REST API + WebSocket progress."""
+        # Start operation via API, get progress via WebSocket
+        
+class WebConfigService(ConfigServiceInterface):
+    """Web config service using browser storage and API."""
+    
+    async def load_config(self) -> dict:
+        """Load from browser local storage and server."""
+        local_config = self.get_local_storage()
+        server_config = await self.api_client.get("/api/config")
+        return {**server_config, **local_config}
+```
+
+### 2. Data Model Compatibility
+
+#### Serializable Data Structures
+Design all data models to be JSON-serializable for web API compatibility:
+
+```python
+from dataclasses import dataclass, asdict
+from typing import Optional, Dict, Any, List
+from datetime import datetime
+import json
+
+@dataclass
+class FileInfo:
+    """File information model compatible with both desktop and web."""
+    
+    path: str
+    name: str
+    size: int
+    modified: datetime
+    extension: str
+    has_metadata: bool
+    metadata_types: List[str]
+    thumbnail_available: bool = False
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Serialize for JSON transmission."""
+        data = asdict(self)
+        data['modified'] = self.modified.isoformat()
+        return data
+        
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'FileInfo':
+        """Deserialize from JSON."""
+        data['modified'] = datetime.fromisoformat(data['modified'])
+        return cls(**data)
+        
+    def to_json(self) -> str:
+        """JSON string representation."""
+        return json.dumps(self.to_dict())
+
+@dataclass
+class OperationOptions:
+    """Base class for operation options."""
+    
+    batch_size: int = 100
+    max_workers: int = 4
+    backup_enabled: bool = True
+    dry_run: bool = False
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+@dataclass
+class CleanOptions(OperationOptions):
+    """Options for clean operations."""
+    
+    output_folder: str = "safe_upload"
+    copy_mode: str = "safe_copy"  # safe_copy, move, in_place
+    
+@dataclass
+class PoisonOptions(OperationOptions):
+    """Options for poison operations."""
+    
+    preset: str = "label_flip"
+    true_hint: str = ""
+    output_formats: Dict[str, bool] = None
+    rename_pattern: str = ""
+    csv_mapping_file: Optional[str] = None
+    
+    def __post_init__(self):
+        if self.output_formats is None:
+            self.output_formats = {
+                "xmp": True,
+                "iptc": True,
+                "exif": False,
+                "sidecar": True,
+                "json": True,
+                "html": False
+            }
+```
+
+#### Configuration Schema
+Use JSON Schema for validation across platforms:
+
+```python
+# Shared configuration schema
+CONFIG_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "general": {
+            "type": "object",
+            "properties": {
+                "batch_size": {"type": "integer", "minimum": 1, "maximum": 1000},
+                "max_workers": {"type": "integer", "minimum": 1, "maximum": 16},
+                "backup_before_operations": {"type": "boolean"},
+                "log_level": {"type": "string", "enum": ["DEBUG", "INFO", "WARNING", "ERROR"]}
+            }
+        },
+        "gui_settings": {
+            "type": "object",
+            "properties": {
+                "theme": {"type": "string", "enum": ["light", "dark", "system"]},
+                "window_size": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2},
+                "show_thumbnails": {"type": "boolean"},
+                "remember_last_folder": {"type": "boolean"}
+            }
+        },
+        "operation_defaults": {
+            "type": "object",
+            "properties": {
+                "clean": {"$ref": "#/definitions/clean_options"},
+                "poison": {"$ref": "#/definitions/poison_options"}
+            }
+        }
+    },
+    "definitions": {
+        "clean_options": {
+            "type": "object",
+            "properties": {
+                "output_folder": {"type": "string"},
+                "copy_mode": {"type": "string", "enum": ["safe_copy", "move", "in_place"]}
+            }
+        },
+        "poison_options": {
+            "type": "object",
+            "properties": {
+                "preset": {"type": "string", "enum": ["label_flip", "clip_confuse", "style_bloat"]},
+                "output_formats": {
+                    "type": "object",
+                    "properties": {
+                        "xmp": {"type": "boolean"},
+                        "iptc": {"type": "boolean"},
+                        "exif": {"type": "boolean"},
+                        "sidecar": {"type": "boolean"},
+                        "json": {"type": "boolean"},
+                        "html": {"type": "boolean"}
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### 3. Event-Driven Architecture
+
+#### Unified Event System
+Design an event system that works for both Qt signals and web event handling:
+
+```python
+from typing import Dict, List, Callable, Any
+from abc import ABC, abstractmethod
+import asyncio
+
+class EventInterface(ABC):
+    """Abstract event system interface."""
+    
+    @abstractmethod
+    def emit(self, event_name: str, data: Any = None) -> None:
+        """Emit an event."""
+        pass
+        
+    @abstractmethod
+    def subscribe(self, event_name: str, callback: Callable) -> None:
+        """Subscribe to an event."""
+        pass
+        
+    @abstractmethod
+    def unsubscribe(self, event_name: str, callback: Callable) -> None:
+        """Unsubscribe from an event."""
+        pass
+
+class DesktopEventSystem(EventInterface):
+    """Desktop event system using Qt signals."""
+    
+    def __init__(self, qt_object):
+        self.qt_object = qt_object
+        self._callbacks: Dict[str, List[Callable]] = {}
+        
+    def emit(self, event_name: str, data: Any = None) -> None:
+        """Emit event using Qt signal."""
+        signal = getattr(self.qt_object, f"{event_name}_signal", None)
+        if signal:
+            signal.emit(data)
+        # Also call direct callbacks
+        for callback in self._callbacks.get(event_name, []):
+            callback(data)
+            
+    def subscribe(self, event_name: str, callback: Callable) -> None:
+        """Subscribe to event."""
+        if event_name not in self._callbacks:
+            self._callbacks[event_name] = []
+        self._callbacks[event_name].append(callback)
+
+class WebEventSystem(EventInterface):
+    """Web event system using async callbacks."""
+    
+    def __init__(self):
+        self._callbacks: Dict[str, List[Callable]] = {}
+        
+    async def emit_async(self, event_name: str, data: Any = None) -> None:
+        """Async event emission for web."""
+        callbacks = self._callbacks.get(event_name, [])
+        if callbacks:
+            await asyncio.gather(*[callback(data) for callback in callbacks])
+            
+    def emit(self, event_name: str, data: Any = None) -> None:
+        """Sync wrapper for async emission."""
+        asyncio.create_task(self.emit_async(event_name, data))
+```
+
+#### Standard Event Types
+Define common events that both platforms will use:
+
+```python
+class EventTypes:
+    """Standard event type definitions."""
+    
+    # File events
+    FILES_ADDED = "files_added"
+    FILES_REMOVED = "files_removed"
+    FILE_SELECTED = "file_selected"
+    
+    # Operation events
+    OPERATION_STARTED = "operation_started"
+    OPERATION_PROGRESS = "operation_progress"
+    OPERATION_COMPLETED = "operation_completed"
+    OPERATION_ERROR = "operation_error"
+    OPERATION_CANCELLED = "operation_cancelled"
+    
+    # Configuration events
+    CONFIG_CHANGED = "config_changed"
+    THEME_CHANGED = "theme_changed"
+    
+    # UI events
+    MODE_CHANGED = "mode_changed"
+    SELECTION_CHANGED = "selection_changed"
+```
+
+### 4. Component Architecture
+
+#### Modular Component Design
+Create components that can be implemented differently for desktop and web:
+
+```python
+class ComponentInterface(ABC):
+    """Base interface for UI components."""
+    
+    def __init__(self, event_system: EventInterface, services: dict):
+        self.events = event_system
+        self.services = services
+        
+    @abstractmethod
+    def initialize(self) -> None:
+        """Initialize the component."""
+        pass
+        
+    @abstractmethod
+    def cleanup(self) -> None:
+        """Cleanup component resources."""
+        pass
+
+class FileManagerComponent(ComponentInterface):
+    """File management component interface."""
+    
+    @abstractmethod
+    def add_files(self, file_paths: List[str]) -> None:
+        """Add files to selection."""
+        pass
+        
+    @abstractmethod
+    def remove_files(self, file_paths: List[str]) -> None:
+        """Remove files from selection."""
+        pass
+        
+    @abstractmethod
+    def get_selected_files(self) -> List[FileInfo]:
+        """Get currently selected files."""
+        pass
+        
+    @abstractmethod
+    def apply_filters(self, filters: dict) -> None:
+        """Apply file filters."""
+        pass
+
+# Desktop implementation
+class DesktopFileManager(FileManagerComponent):
+    """Qt-based file manager implementation."""
+    
+    def __init__(self, event_system, services, parent_widget):
+        super().__init__(event_system, services)
+        self.parent = parent_widget
+        self.file_model = None
+        self.tree_view = None
+        
+    def initialize(self) -> None:
+        """Initialize Qt widgets."""
+        from PyQt6.QtWidgets import QTreeView
+        self.tree_view = QTreeView(self.parent)
+        # Setup Qt-specific initialization
+        
+# Web implementation (future)
+class WebFileManager(FileManagerComponent):
+    """Web-based file manager implementation."""
+    
+    def __init__(self, event_system, services, container_id):
+        super().__init__(event_system, services)
+        self.container_id = container_id
+        
+    def initialize(self) -> None:
+        """Initialize web component."""
+        # Setup React component or vanilla JS
+        pass
+```
+
+### 5. Data Persistence Strategy
+
+#### Storage Abstraction
+Create storage interfaces that work across platforms:
+
+```python
+class StorageInterface(ABC):
+    """Abstract storage interface."""
+    
+    @abstractmethod
+    async def get(self, key: str) -> Optional[Any]:
+        """Get value by key."""
+        pass
+        
+    @abstractmethod
+    async def set(self, key: str, value: Any) -> bool:
+        """Set value by key."""
+        pass
+        
+    @abstractmethod
+    async def delete(self, key: str) -> bool:
+        """Delete value by key."""
+        pass
+        
+    @abstractmethod
+    async def list_keys(self, prefix: str = "") -> List[str]:
+        """List keys with optional prefix."""
+        pass
+
+class DesktopStorage(StorageInterface):
+    """Desktop storage using local files."""
+    
+    def __init__(self, base_path: Path):
+        self.base_path = base_path
+        
+    async def get(self, key: str) -> Optional[Any]:
+        """Load from YAML file."""
+        file_path = self.base_path / f"{key}.yaml"
+        if file_path.exists():
+            import yaml
+            with open(file_path, 'r') as f:
+                return yaml.safe_load(f)
+        return None
+
+class WebStorage(StorageInterface):
+    """Web storage using localStorage + server API."""
+    
+    def __init__(self, api_client):
+        self.api_client = api_client
+        
+    async def get(self, key: str) -> Optional[Any]:
+        """Get from localStorage first, then server."""
+        # Try localStorage first for client-side settings
+        # Fall back to server API for shared settings
+        pass
+```
+
+### 6. Testing Strategy for Compatibility
+
+#### Shared Test Interfaces
+Create test interfaces that validate both implementations:
+
+```python
+class ServiceTestSuite:
+    """Test suite that validates service implementations."""
+    
+    def __init__(self, service_implementation):
+        self.service = service_implementation
+        
+    async def test_file_operations(self):
+        """Test file operations across implementations."""
+        # Test that both desktop and web services handle files consistently
+        
+    async def test_configuration_persistence(self):
+        """Test configuration handling."""
+        # Test that config works the same way on both platforms
+        
+    async def test_operation_execution(self):
+        """Test operation execution."""
+        # Test that operations produce consistent results
+
+# Run tests against both implementations
+def test_desktop_services():
+    desktop_service = DesktopFileService(cli_backend)
+    test_suite = ServiceTestSuite(desktop_service)
+    asyncio.run(test_suite.test_file_operations())
+    
+def test_web_services():
+    web_service = WebFileService(api_client)
+    test_suite = ServiceTestSuite(web_service)
+    asyncio.run(test_suite.test_file_operations())
+```
+
+## Implementation Guidelines
+
+### Phase 1: PyQt6 Desktop Implementation
+
+#### 1. Service Layer First
+- Implement abstract service interfaces
+- Create desktop-specific implementations
+- Ensure all business logic is in services, not UI components
+
+#### 2. Data Model Design
+- Use dataclasses with serialization methods
+- Validate all models against JSON Schema
+- Test serialization/deserialization roundtrips
+
+#### 3. Event System Integration
+- Use Qt signals for internal communication
+- Wrap in abstract event system for future compatibility
+- Document all events and their data payloads
+
+#### 4. Component Modularity
+- Design components as self-contained units
+- Minimize dependencies between components
+- Use dependency injection for services
+
+#### 5. Configuration Management
+- Use JSON Schema validation
+- Support both file-based and programmatic configuration
+- Plan for server-side configuration sync
+
+### Phase 2: Web Interface Implementation
+
+#### 1. API Design
+- Create REST API endpoints based on service interfaces
+- Use FastAPI with automatic OpenAPI documentation
+- Implement WebSocket endpoints for real-time updates
+
+#### 2. Frontend Architecture
+- Use React with TypeScript for type safety
+- Implement service layer in frontend matching desktop interfaces
+- Use consistent data models and validation
+
+#### 3. State Management
+- Use React Context or Redux for state management
+- Mirror desktop component architecture
+- Implement optimistic updates with server sync
+
+#### 4. Progressive Enhancement
+- Start with basic functionality
+- Add advanced features incrementally
+- Maintain fallbacks for limited browser capabilities
+
+## Migration Path
+
+### Desktop to Web Data Migration
+```python
+class MigrationService:
+    """Service for migrating data between platforms."""
+    
+    async def export_desktop_config(self, desktop_storage: DesktopStorage) -> dict:
+        """Export desktop configuration for web import."""
+        config = await desktop_storage.get("config")
+        # Transform for web compatibility
+        return self.transform_config_for_web(config)
+        
+    async def import_web_config(self, web_storage: WebStorage, config: dict) -> bool:
+        """Import web configuration to desktop."""
+        desktop_config = self.transform_config_for_desktop(config)
+        return await web_storage.set("config", desktop_config)
+```
+
+### Gradual Feature Migration
+1. **Core Operations**: Clean, Poison, Revert
+2. **File Management**: Upload, selection, filtering
+3. **Progress Tracking**: Real-time updates
+4. **Configuration**: Settings persistence
+5. **Advanced Features**: Metadata editing, batch operations
+6. **Collaboration**: Sharing, multi-user features
+
+## Success Metrics
+
+### Code Reuse
+- **Target**: 70% of business logic code shared between platforms
+- **Measurement**: Lines of code in shared services vs. platform-specific UI
+
+### API Consistency
+- **Target**: 100% of desktop operations available via web API
+- **Measurement**: Feature parity matrix
+
+### Performance Consistency
+- **Target**: Web operations complete within 150% of desktop time
+- **Measurement**: Operation timing benchmarks
+
+### Configuration Compatibility
+- **Target**: 90% of desktop settings work in web interface
+- **Measurement**: Configuration schema coverage
+
+## Conclusion
+
+This forward-compatibility architecture ensures that the PyQt6 desktop implementation serves as a solid foundation for the future web interface. By following these design principles:
+
+1. **Service abstraction** enables easy platform switching
+2. **Serializable data models** ensure consistent data handling
+3. **Event-driven architecture** provides loose coupling
+4. **Modular components** allow platform-specific implementations
+5. **Storage abstraction** enables flexible persistence strategies
+
+The result is a robust, maintainable codebase that maximizes development efficiency while providing excellent user experiences on both desktop and web platforms.
