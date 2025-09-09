@@ -1,16 +1,16 @@
 """Main controller for coordinating application business logic."""
 
-from typing import List, Dict, Any, Optional
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 from PyQt6.QtCore import QObject, pyqtSignal
 
-from ..models.file_model import FileModel
 from ..models.config_model import ConfigModel
+from ..models.file_model import FileModel
 from ..models.operation_model import OperationModel, OperationResult
 from ..services.cli_service import (
-    CLIService,
     CleanOptions,
+    CLIService,
     PoisonOptions,
     RevertOptions,
 )

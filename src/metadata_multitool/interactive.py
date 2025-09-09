@@ -11,8 +11,9 @@ from colorama import init as color_init
 
 from .batch import process_batch
 from .clean import clean_copy
-from .config import load_config, get_config_value, save_config
-from .core import ensure_dir, iter_images, read_log, write_log, rel_to_root
+from .config import get_config_value, load_config, save_config
+from .core import ensure_dir, iter_images, read_log, rel_to_root, write_log
+from .html import html_snippet
 from .poison import (
     load_csv_mapping,
     make_caption,
@@ -20,7 +21,6 @@ from .poison import (
     write_metadata,
     write_sidecars,
 )
-from .html import html_snippet
 from .revert import revert_dir
 
 color_init()

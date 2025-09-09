@@ -2,11 +2,11 @@
 
 from typing import Optional
 
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTabWidget
 from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
-from ..models.file_model import FileModel
 from ..models.config_model import ConfigModel
+from ..models.file_model import FileModel
 from ..models.operation_model import OperationModel
 from ..utils.icons import IconManager
 from .common.theme_manager import ThemeManager

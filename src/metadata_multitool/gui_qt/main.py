@@ -1,13 +1,13 @@
 """Main entry point for PyQt6 GUI application."""
 
-import sys
 import os
+import sys
 from pathlib import Path
 from typing import Optional
 
-from PyQt6.QtWidgets import QApplication
-from PyQt6.QtCore import Qt, QDir
+from PyQt6.QtCore import QDir, Qt
 from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QApplication
 
 # Add the project root to the path so we can import from the CLI modules
 project_root = Path(__file__).parent.parent.parent.parent.parent

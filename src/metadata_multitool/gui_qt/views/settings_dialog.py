@@ -2,24 +2,24 @@
 
 from typing import Optional
 
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
-    QDialog,
-    QVBoxLayout,
-    QHBoxLayout,
-    QTabWidget,
-    QWidget,
-    QLabel,
-    QLineEdit,
-    QPushButton,
     QCheckBox,
-    QSpinBox,
     QComboBox,
-    QGroupBox,
+    QDialog,
     QDialogButtonBox,
     QFileDialog,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
     QMessageBox,
+    QPushButton,
+    QSpinBox,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
 )
-from PyQt6.QtCore import Qt
 
 from ..models.config_model import ConfigModel
 from .common.theme_manager import ThemeManager

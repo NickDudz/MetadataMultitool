@@ -1,13 +1,14 @@
 """Tests for GUI functionality."""
 
-import pytest
 import tkinter as tk
 from pathlib import Path
 from unittest.mock import Mock, patch
 
+import pytest
+
 from metadata_multitool.gui.main_window import MainWindow
-from metadata_multitool.gui.models.file_model import FileModel
 from metadata_multitool.gui.models.config_model import ConfigModel
+from metadata_multitool.gui.models.file_model import FileModel
 from metadata_multitool.gui.models.operation_model import OperationModel
 
 

@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import List, Dict, Any, Optional
 import os
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 class FileModel:

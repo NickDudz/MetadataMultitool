@@ -1,21 +1,21 @@
 """Progress widget for displaying operation progress."""
 
-from typing import Optional
 from pathlib import Path
+from typing import Optional
 
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal
+from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
+    QFrame,
     QHBoxLayout,
     QLabel,
     QProgressBar,
     QPushButton,
-    QTextEdit,
     QSplitter,
-    QFrame,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
-from PyQt6.QtCore import Qt, pyqtSignal, QTimer
-from PyQt6.QtGui import QFont
 
 from ..models.operation_model import (
     OperationModel,

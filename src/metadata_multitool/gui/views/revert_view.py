@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import tkinter as tk
-from tkinter import ttk, filedialog
 from pathlib import Path
+from tkinter import filedialog, ttk
 from typing import Optional
 
-from ..models.file_model import FileModel
 from ..models.config_model import ConfigModel
+from ..models.file_model import FileModel
 from ..models.operation_model import OperationModel
-from ..utils.gui_utils import show_error, show_warning, show_info
+from ..utils.gui_utils import show_error, show_info, show_warning
 from ..utils.validation_utils import validate_path
 
 

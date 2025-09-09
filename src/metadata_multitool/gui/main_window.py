@@ -3,22 +3,22 @@
 from __future__ import annotations
 
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from tkinter import filedialog, messagebox, ttk
+from typing import Any, Dict, List, Optional
 
-from ..config import load_config, save_config, get_config_value
-from .models.file_model import FileModel
+from ..config import get_config_value, load_config, save_config
 from .models.config_model import ConfigModel
+from .models.file_model import FileModel
 from .models.operation_model import OperationModel
+from .utils.gui_utils import show_error, show_info, show_warning
+from .utils.threading_utils import BackgroundProcessor
 from .views.clean_view import CleanView
+from .views.file_list_view import FileListView
 from .views.poison_view import PoisonView
+from .views.progress_view import ProgressView
 from .views.revert_view import RevertView
 from .views.settings_view import SettingsView
-from .views.file_list_view import FileListView
-from .views.progress_view import ProgressView
-from .utils.gui_utils import show_error, show_warning, show_info
-from .utils.threading_utils import BackgroundProcessor
 
 
 class MainWindow:

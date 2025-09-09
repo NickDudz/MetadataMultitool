@@ -1,7 +1,8 @@
 """Theme management for the application."""
 
-from typing import Dict, Optional
 from pathlib import Path
+from typing import Dict, Optional
+
 from PyQt6.QtCore import QObject, pyqtSignal
 from PyQt6.QtWidgets import QApplication
 

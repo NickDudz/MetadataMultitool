@@ -2,16 +2,16 @@
 
 import sys
 from pathlib import Path
-from typing import Dict, Any, Optional
-import yaml
+from typing import Any, Dict, Optional
 
+import yaml
 from PyQt6.QtCore import QObject, pyqtSignal
 
 # Add project root to path for CLI imports
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from metadata_multitool.config import load_config, save_config, get_config_value
+from metadata_multitool.config import get_config_value, load_config, save_config
 
 
 class ConfigService(QObject):

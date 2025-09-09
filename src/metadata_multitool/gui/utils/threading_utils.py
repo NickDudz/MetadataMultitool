@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import threading
-from queue import Queue, Empty
-from typing import Callable, Any, Optional
 import time
+from queue import Empty, Queue
+from typing import Any, Callable, Optional
 
 
 class BackgroundProcessor:

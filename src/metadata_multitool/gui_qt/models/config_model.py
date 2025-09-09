@@ -1,6 +1,7 @@
 """Configuration model for Qt GUI."""
 
 from typing import Any, Dict, Optional
+
 from PyQt6.QtCore import QObject, pyqtSignal
 
 from ..services.config_service import ConfigService

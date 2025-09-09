@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Dict, Any, Optional
 from pathlib import Path
+from typing import Any, Dict, Optional
 
-from ...config import save_config, get_config_value
+from ...config import get_config_value, save_config
 
 
 class ConfigModel:

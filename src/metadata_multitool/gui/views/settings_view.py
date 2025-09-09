@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import tkinter as tk
-from tkinter import ttk, messagebox
 from pathlib import Path
+from tkinter import messagebox, ttk
 from typing import Optional
 
 from ..models.config_model import ConfigModel
-from ..utils.gui_utils import show_error, show_warning, show_info, center_window
+from ..utils.gui_utils import center_window, show_error, show_info, show_warning
 
 
 class SettingsView:

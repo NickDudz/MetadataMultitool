@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import tkinter as tk
-from tkinter import ttk
 from pathlib import Path
+from tkinter import ttk
 from typing import Optional
 
 from ..models.file_model import FileModel
-from ..utils.gui_utils import format_file_size, create_tooltip
+from ..utils.gui_utils import create_tooltip, format_file_size
 
 
 class FileListView:
@@ -194,8 +194,8 @@ class FileListView:
             files = self.file_model.get_files()
             for file_path in files:
                 if file_path.name == file_name:
-                    import subprocess
                     import platform
+                    import subprocess
 
                     folder_path = file_path.parent
                     if platform.system() == "Windows":

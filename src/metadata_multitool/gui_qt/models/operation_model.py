@@ -1,9 +1,9 @@
 """Operation model for tracking operation state and progress."""
 
-from typing import Optional, Dict, Any, List
-from enum import Enum
 from dataclasses import dataclass, field
 from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional
 
 from PyQt6.QtCore import QObject, pyqtSignal
 

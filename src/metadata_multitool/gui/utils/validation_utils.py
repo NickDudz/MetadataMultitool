@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import List, Optional, Tuple
-import re
 
 
 def validate_path(path_str: str) -> Tuple[bool, Optional[Path], str]:

@@ -1,38 +1,38 @@
 """Main window for the PyQt6 Metadata Multitool GUI."""
 
-from typing import Optional, Dict, Any
 from pathlib import Path
+from typing import Any, Dict, Optional
 
-from PyQt6.QtWidgets import (
-    QMainWindow,
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QTabWidget,
-    QMenuBar,
-    QMenu,
-    QToolBar,
-    QStatusBar,
-    QSplitter,
-    QDockWidget,
-    QMessageBox,
-    QFileDialog,
-)
-from PyQt6.QtCore import Qt, pyqtSignal, QSettings, QTimer
+from PyQt6.QtCore import QSettings, Qt, QTimer, pyqtSignal
 from PyQt6.QtGui import QAction, QKeySequence
+from PyQt6.QtWidgets import (
+    QDockWidget,
+    QFileDialog,
+    QHBoxLayout,
+    QMainWindow,
+    QMenu,
+    QMenuBar,
+    QMessageBox,
+    QSplitter,
+    QStatusBar,
+    QTabWidget,
+    QToolBar,
+    QVBoxLayout,
+    QWidget,
+)
 
-from .views.main_view import MainView
-from .views.file_panel import FilePanel
-from .views.progress_widget import ProgressWidget
-from .views.settings_dialog import SettingsDialog
 from .controllers.main_controller import MainController
-from .models.file_model import FileModel
 from .models.config_model import ConfigModel
+from .models.file_model import FileModel
 from .models.operation_model import OperationModel
 from .services.cli_service import CLIService
 from .services.config_service import ConfigService
 from .utils.icons import IconManager
 from .views.common.theme_manager import ThemeManager
+from .views.file_panel import FilePanel
+from .views.main_view import MainView
+from .views.progress_widget import ProgressWidget
+from .views.settings_dialog import SettingsDialog
 
 
 class MainWindow(QMainWindow):

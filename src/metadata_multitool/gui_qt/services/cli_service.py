@@ -1,24 +1,24 @@
 """CLI service for integrating with the backend operations."""
 
-import sys
-from pathlib import Path
-from typing import List, Dict, Any, Optional, Callable, Iterator
-from dataclasses import dataclass
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
+import sys
 import traceback
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Callable, Dict, Iterator, List, Optional
 
-from PyQt6.QtCore import QObject, pyqtSignal, QThread, QTimer
+from PyQt6.QtCore import QObject, QThread, QTimer, pyqtSignal
 
 # Add project root to path for CLI imports
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from metadata_multitool.core import iter_images, MetadataMultitoolError
 from metadata_multitool.clean import clean_copy
+from metadata_multitool.config import load_config
+from metadata_multitool.core import MetadataMultitoolError, iter_images
 from metadata_multitool.poison import write_metadata, write_sidecars
 from metadata_multitool.revert import revert_dir
-from metadata_multitool.config import load_config
 
 
 @dataclass

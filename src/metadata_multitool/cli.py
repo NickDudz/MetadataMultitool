@@ -10,9 +10,10 @@ from typing import Any, List, Tuple
 from colorama import Fore, Style
 from colorama import init as color_init
 
+from .backup import backup_before_operation, create_backup_manager
 from .batch import process_batch
 from .clean import clean_copy
-from .config import load_config, get_config_value
+from .config import get_config_value, load_config
 from .core import (
     InvalidPathError,
     LogError,
@@ -23,7 +24,15 @@ from .core import (
     rel_to_root,
     write_log,
 )
+from .filters import (
+    FileFilter,
+    create_filter_from_args,
+    parse_date_filter,
+    parse_size_filter,
+)
 from .html import html_snippet
+from .interactive import interactive_mode
+from .logging import get_logger, log_operation_summary
 from .poison import (
     load_csv_mapping,
     make_caption,
@@ -32,15 +41,6 @@ from .poison import (
     write_sidecars,
 )
 from .revert import revert_dir
-from .interactive import interactive_mode
-from .filters import (
-    FileFilter,
-    create_filter_from_args,
-    parse_size_filter,
-    parse_date_filter,
-)
-from .logging import get_logger, log_operation_summary
-from .backup import create_backup_manager, backup_before_operation
 
 color_init()
 

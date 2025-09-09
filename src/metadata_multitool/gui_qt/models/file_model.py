@@ -1,12 +1,12 @@
 """Qt-based file model for managing selected files."""
 
-from typing import List, Dict, Any, Optional, Union
-from pathlib import Path
 import os
 from dataclasses import dataclass, field
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
-from PyQt6.QtCore import QAbstractTableModel, QModelIndex, Qt, pyqtSignal, QVariant
+from PyQt6.QtCore import QAbstractTableModel, QModelIndex, Qt, QVariant, pyqtSignal
 from PyQt6.QtGui import QIcon
 
 

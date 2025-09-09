@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Dict, Any, Optional, Callable
-from enum import Enum
 import threading
+from enum import Enum
+from typing import Any, Callable, Dict, Optional
 
 
 class OperationStatus(Enum):

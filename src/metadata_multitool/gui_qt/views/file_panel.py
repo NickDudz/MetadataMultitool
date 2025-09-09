@@ -1,22 +1,22 @@
 """File panel for managing selected files."""
 
-from typing import List, Optional
 from pathlib import Path
+from typing import List, Optional
 
+from PyQt6.QtCore import QItemSelectionModel, Qt, pyqtSignal
+from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
+    QAbstractItemView,
+    QFileDialog,
     QHBoxLayout,
+    QHeaderView,
+    QMenu,
+    QMessageBox,
     QPushButton,
     QTableView,
-    QHeaderView,
-    QAbstractItemView,
-    QMenu,
-    QFileDialog,
-    QMessageBox,
+    QVBoxLayout,
+    QWidget,
 )
-from PyQt6.QtCore import Qt, pyqtSignal, QItemSelectionModel
-from PyQt6.QtGui import QAction
 
 from ..models.file_model import FileModel
 from ..utils.icons import IconManager

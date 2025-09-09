@@ -1,9 +1,10 @@
 """Icon and resource management for the application."""
 
-from typing import Optional, Dict
 from pathlib import Path
-from PyQt6.QtGui import QIcon, QPixmap
+from typing import Dict, Optional
+
 from PyQt6.QtCore import QSize
+from PyQt6.QtGui import QIcon, QPixmap
 
 
 class IconManager:

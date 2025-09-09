@@ -1,23 +1,23 @@
 """Clean operation panel."""
 
-from typing import Dict, Any
 from pathlib import Path
+from typing import Any, Dict
 
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
+    QCheckBox,
+    QFileDialog,
+    QGroupBox,
     QHBoxLayout,
     QLabel,
     QLineEdit,
     QPushButton,
-    QCheckBox,
-    QGroupBox,
-    QFileDialog,
+    QVBoxLayout,
+    QWidget,
 )
-from PyQt6.QtCore import pyqtSignal
 
-from ...models.file_model import FileModel
 from ...models.config_model import ConfigModel
+from ...models.file_model import FileModel
 from ...utils.icons import IconManager
 
 
