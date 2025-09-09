@@ -1,0 +1,23 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+.build/
+htmlcov/
+.coverage
+.pytest_cache/
+.DS_Store
+Thumbs.db
+.venv/
+.env
+.exiftool_config
+safe_upload/
+
+# Development documentation
+CLAUDE.md
+GUI_PYQT6_IMPLEMENTATION_PROMPT.md
+GUI_DEVELOPMENT_ROADMAP.md
+GUI_ARCHITECTURE_FORWARD_COMPATIBILITY.md
+NEXT_PHASES_PROMPT.md

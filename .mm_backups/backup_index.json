@@ -1,0 +1,37 @@
+{
+  "backups": {
+    "1": {
+      "type": "file",
+      "source_path": "test_images\\test1.jpg",
+      "backup_path": ".mm_backups\\1\\test1.jpg",
+      "operation": "clean",
+      "created_at": "2025-09-08T16:28:03.678462",
+      "size": 633
+    },
+    "2": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmp8ix2ip6k",
+      "backup_path": ".mm_backups\\2\\tmp8ix2ip6k",
+      "operation": "clean",
+      "created_at": "2025-09-08T16:28:25.597608",
+      "size": 633
+    },
+    "3": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmpxs3pxngb",
+      "backup_path": ".mm_backups\\3\\tmpxs3pxngb",
+      "operation": "clean",
+      "created_at": "2025-09-08T16:28:27.670381",
+      "size": 711
+    },
+    "4": {
+      "type": "directory",
+      "source_path": "C:\\Users\\Nick\\AppData\\Local\\Temp\\tmpxs3pxngb",
+      "backup_path": ".mm_backups\\4\\tmpxs3pxngb",
+      "operation": "clean",
+      "created_at": "2025-09-08T16:28:28.391086",
+      "size": 1422
+    }
+  },
+  "next_id": 5
+}

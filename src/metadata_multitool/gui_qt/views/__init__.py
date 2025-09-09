@@ -1,0 +1,1 @@
+"""UI views and widgets for PyQt6 GUI."""
