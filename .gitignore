@@ -36,6 +36,10 @@ venv.bak/
 .claude/
 CLAUDE.md
 
+# Development Prompts (not needed on GitHub)
+docs/development/GUI_PYQT6_IMPLEMENTATION_PROMPT.md
+docs/development/NEXT_PHASES_PROMPT.md
+
 # OS Generated Files
 .DS_Store
 .DS_Store?
