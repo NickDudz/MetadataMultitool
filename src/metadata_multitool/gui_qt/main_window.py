@@ -392,7 +392,7 @@ class MainWindow(QMainWindow):
 <h2>Metadata Multitool v0.4.0</h2>
 <p>A privacy-focused tool for managing image metadata.</p>
 <p>Built with PyQt6 for modern desktop experience.</p>
-<p><a href="https://github.com/yourusername/metadata-multitool">GitHub Repository</a></p>
+<p><a href="https://github.com/NickDudz/MetadataMultitool">GitHub Repository</a></p>
         """
         
         QMessageBox.about(self, "About", about_text)
