@@ -47,21 +47,23 @@ class TestRunExiftool:
     def test_run_exiftool_success(self) -> None:
         """Test successful exiftool execution."""
         with patch("subprocess.run") as mock_run:
-            mock_run.return_value = Mock(returncode=0)
+            mock_result = Mock(returncode=0, stdout="", stderr="")
+            mock_run.return_value = mock_result
 
             run_exiftool(["-ver"])
             mock_run.assert_called_once_with(
-                ["exiftool", "-ver"], check=True, text=True
+                ["exiftool", "-ver"], check=True, text=True, capture_output=True
             )
 
     def test_run_exiftool_with_args(self) -> None:
         """Test exiftool execution with various arguments."""
         with patch("subprocess.run") as mock_run:
-            mock_run.return_value = Mock(returncode=0)
+            mock_result = Mock(returncode=0, stdout="", stderr="")
+            mock_run.return_value = mock_result
 
             args = ["-overwrite_original", "-all=", "/path/to/image.jpg"]
             run_exiftool(args)
-            mock_run.assert_called_once_with(["exiftool"] + args, check=True, text=True)
+            mock_run.assert_called_once_with(["exiftool"] + args, check=True, text=True, capture_output=True)
 
     def test_run_exiftool_raises_on_error(self) -> None:
         """Test that run_exiftool raises on subprocess error."""
@@ -139,9 +141,13 @@ class TestStripAllMetadata:
                 with patch("metadata_multitool.exif.run_exiftool") as mock_run:
                     strip_all_metadata(img_path)
 
-                    mock_run.assert_called_once_with(
-                        ["-overwrite_original", "-all=", str(img_path)]
-                    )
+                    if filename.endswith('.bmp'):
+                        # BMP files are skipped, so run_exiftool should not be called
+                        mock_run.assert_not_called()
+                    else:
+                        mock_run.assert_called_once_with(
+                            ["-overwrite_original", "-all=", str(img_path)]
+                        )
 
     def test_strip_all_metadata_nonexistent_file(self, tmp_path: Path) -> None:
         """Test metadata stripping with nonexistent file."""

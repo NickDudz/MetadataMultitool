@@ -5,6 +5,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
+from PIL import Image
 
 from metadata_multitool.revert import revert_dir
 
@@ -29,7 +30,8 @@ class TestRevertDir:
         """Test reverting directory with sidecar files."""
         # Create test files
         img_file = tmp_path / "test.jpg"
-        img_file.touch()
+        with Image.new("RGB", (50, 50), color="red") as img:
+            img.save(img_file, "JPEG")
         txt_file = tmp_path / "test.txt"
         txt_file.write_text("test caption", encoding="utf-8")
         json_file = tmp_path / "test.json"
@@ -64,7 +66,8 @@ class TestRevertDir:
         """Test reverting directory with renamed files."""
         # Create renamed file
         renamed_file = tmp_path / "test_toaster.jpg"
-        renamed_file.touch()
+        with Image.new("RGB", (50, 50), color="red") as img:
+            img.save(renamed_file, "JPEG")
 
         # Create log with original name
         log_data = {
@@ -91,7 +94,8 @@ class TestRevertDir:
     def test_revert_dir_with_metadata_clearing(self, tmp_path: Path) -> None:
         """Test reverting directory with metadata clearing."""
         img_file = tmp_path / "test.jpg"
-        img_file.touch()
+        with Image.new("RGB", (50, 50), color="red") as img:
+            img.save(img_file, "JPEG")
 
         log_data = {
             "entries": {
@@ -123,7 +127,8 @@ class TestRevertDir:
     def test_revert_dir_without_exiftool(self, tmp_path: Path) -> None:
         """Test reverting directory without exiftool."""
         img_file = tmp_path / "test.jpg"
-        img_file.touch()
+        with Image.new("RGB", (50, 50), color="red") as img:
+            img.save(img_file, "JPEG")
 
         log_data = {
             "entries": {
@@ -150,7 +155,8 @@ class TestRevertDir:
         """Test reverting directory with mixed operations."""
         # Create renamed file (this is the only image file that exists)
         renamed_file = tmp_path / "test_toaster.jpg"
-        renamed_file.touch()
+        with Image.new("RGB", (50, 50), color="red") as img:
+            img.save(renamed_file, "JPEG")
         renamed_txt = tmp_path / "test_toaster.txt"
         renamed_txt.write_text("test caption", encoding="utf-8")
 
@@ -201,7 +207,8 @@ class TestRevertDir:
         """Test reverting directory when rename operations fail."""
         # Create file that can't be renamed (simulate permission error)
         img_file = tmp_path / "test_toaster.jpg"
-        img_file.touch()
+        with Image.new("RGB", (50, 50), color="red") as img:
+            img.save(img_file, "JPEG")
 
         log_data = {
             "entries": {
@@ -227,7 +234,8 @@ class TestRevertDir:
         """Test that log is updated after successful rename."""
         # Create renamed file
         renamed_file = tmp_path / "test_toaster.jpg"
-        renamed_file.touch()
+        with Image.new("RGB", (50, 50), color="red") as img:
+            img.save(renamed_file, "JPEG")
 
         log_data = {
             "entries": {
@@ -252,7 +260,8 @@ class TestRevertDir:
     def test_revert_dir_clears_all_entries(self, tmp_path: Path) -> None:
         """Test that all entries are cleared from log after revert."""
         img_file = tmp_path / "test.jpg"
-        img_file.touch()
+        with Image.new("RGB", (50, 50), color="red") as img:
+            img.save(img_file, "JPEG")
 
         log_data = {
             "entries": {
