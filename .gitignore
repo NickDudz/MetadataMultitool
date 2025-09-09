@@ -34,6 +34,7 @@ venv.bak/
 *.sublime-project
 *.sublime-workspace
 .claude/
+CLAUDE.md
 
 # OS Generated Files
 .DS_Store
