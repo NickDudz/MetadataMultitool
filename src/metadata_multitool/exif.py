@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import subprocess
+import json
 from pathlib import Path
-from typing import List
+from typing import List, Set, Dict, Any
 
 
 def has_exiftool() -> bool:
@@ -39,6 +40,45 @@ def run_exiftool(args: List[str]) -> None:
         else:
             # Re-raise for other errors
             raise
+
+
+def get_metadata_fields(file_path: Path) -> Set[str]:
+    """
+    Get all metadata field names from an image file using ExifTool.
+    
+    Args:
+        file_path: Path to image file
+        
+    Returns:
+        Set of metadata field names
+    """
+    if not has_exiftool():
+        return set()
+    
+    try:
+        result = subprocess.run(
+            ["exiftool", "-json", "-s", str(file_path)],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        
+        if not result.stdout.strip():
+            return set()
+            
+        metadata = json.loads(result.stdout)
+        if not metadata or not isinstance(metadata, list) or not metadata[0]:
+            return set()
+            
+        # Remove non-metadata fields
+        fields = set(metadata[0].keys())
+        fields.discard("SourceFile")
+        fields.discard("ExifToolVersion")
+        
+        return fields
+        
+    except (subprocess.CalledProcessError, json.JSONDecodeError, KeyError, IndexError):
+        return set()
 
 
 def strip_all_metadata(img: Path) -> None:

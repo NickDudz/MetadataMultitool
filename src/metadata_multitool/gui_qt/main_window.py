@@ -33,6 +33,7 @@ from .views.file_panel import FilePanel
 from .views.main_view import MainView
 from .views.progress_widget import ProgressWidget
 from .views.settings_dialog import SettingsDialog
+from metadata_multitool.__version__ import __version__
 
 
 class MainWindow(QMainWindow):
@@ -93,7 +94,7 @@ class MainWindow(QMainWindow):
 
     def _setup_window(self) -> None:
         """Setup main window properties."""
-        self.setWindowTitle("Metadata Multitool v0.4.0")
+        self.setWindowTitle(f"Metadata Multitool v{__version__}")
         self.setMinimumSize(1000, 700)
         self.resize(1200, 800)
 
