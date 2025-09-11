@@ -280,7 +280,7 @@ def test_cli_help_commands() -> None:
     # Test subcommand help
     output = run_cli(["clean", "--help"], cwd=proj)
     assert "usage: mm clean" in output
-    assert "path" in output
+    assert "path" in output  # positional metavar
     assert "copy-folder" in output
 
     output = run_cli(["poison", "--help"], cwd=proj)
@@ -289,7 +289,7 @@ def test_cli_help_commands() -> None:
 
     output = run_cli(["revert", "--help"], cwd=proj)
     assert "usage: mm revert" in output
-    assert "path" in output
+    assert "path" in output  # positional metavar
 
 
 def test_cli_error_handling(tmp_path: Path) -> None:

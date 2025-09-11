@@ -1,6 +1,6 @@
 # Metadata Multitool GUI
 
-Graphical user interfaces for the Metadata Multitool, featuring both modern PyQt6 and legacy Tkinter implementations.
+Graphical user interface for the Metadata Multitool, implemented with modern PyQt6.
 
 ## Features
 
@@ -49,13 +49,7 @@ mm-gui  # Launch modern PyQt6 interface
 - ✅ Real-time progress tracking with cancel/pause
 - ✅ Background operations with full CLI integration
 
-### Legacy Tkinter GUI
-**Basic Interface** for systems without PyQt6 support.
-
-**Launch:**
-```bash
-mm gui  # Launch legacy Tkinter interface
-```
+<!-- Legacy Tkinter GUI has been removed as of v0.4.x. -->
 
 ## Usage
 
@@ -127,7 +121,7 @@ Modern implementation with Qt6 features and service layer abstraction.
 - Fixed dock widget layout (non-movable)
 - Professional theming with QSS stylesheets
 
-### Legacy Tkinter GUI Architecture (`src/metadata_multitool/gui/`)
+<!-- Legacy Tkinter GUI Architecture removed -->
 
 ### Models
 - **FileModel**: Manages selected files and metadata
@@ -190,36 +184,7 @@ src/metadata_multitool/gui_qt/
     └── validators.py          # Input validation
 ```
 
-### Legacy Tkinter GUI Structure
-```
-src/metadata_multitool/gui/
-├── __init__.py
-├── main_window.py              # Main GUI window
-├── models/
-│   ├── __init__.py
-│   ├── file_model.py          # File management
-│   ├── config_model.py        # Configuration
-│   └── operation_model.py     # Operation state
-├── views/
-│   ├── __init__.py
-│   ├── clean_view.py          # Clean mode UI
-│   ├── poison_view.py         # Poison mode UI
-│   ├── revert_view.py         # Revert mode UI
-│   ├── settings_view.py       # Settings panel
-│   ├── file_list_view.py      # File selection
-│   └── progress_view.py       # Progress tracking
-├── controllers/
-│   ├── __init__.py
-│   ├── clean_controller.py    # Clean logic
-│   ├── poison_controller.py   # Poison logic
-│   ├── revert_controller.py   # Revert logic
-│   └── settings_controller.py # Settings logic
-└── utils/
-    ├── __init__.py
-    ├── gui_utils.py           # GUI utilities
-    ├── threading_utils.py     # Threading helpers
-    └── validation_utils.py    # Input validation
-```
+<!-- Legacy Tkinter GUI Structure removed -->
 
 ## Configuration
 
@@ -287,7 +252,7 @@ show_info("Info Title", "Info message")
 
 ### Common Issues
 
-1. **GUI won't start**: Check if tkinter is installed
+1. **GUI won't start**: Ensure PyQt6 is installed
 2. **Files not loading**: Verify file permissions and paths
 3. **Settings not saving**: Check write permissions for config file
 4. **Slow performance**: Reduce batch size or max workers

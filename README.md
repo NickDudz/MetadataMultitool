@@ -24,8 +24,8 @@ pip install -e .
 # Windows (choco): choco install exiftool
 
 mm --help
-mm gui  # Launch legacy Tkinter GUI
-python src/metadata_multitool/gui_qt/main.py  # Launch modern PyQt6 GUI
+mm gui  # Launch modern PyQt6 GUI
+python src/metadata_multitool/gui_qt/main.py  # Alternative direct launch
 mm clean ./samples
 mm poison ./samples --preset label_flip --sidecar --json --xmp --iptc --exif --true-hint "cat on couch"
 mm poison ./samples --preset clip_confuse --sidecar --rename-pattern "{stem}_toaster"
@@ -38,7 +38,7 @@ mm revert ./samples
 - `poison` — write misleading captions/keywords to EXIF/IPTC/XMP; create `.txt/.json` sidecars; optionally rename files and emit HTML snippets.
 - `revert` — remove created sidecars, clear fields we wrote, and restore prior names when possible.
 - `interactive` — guided workflow mode for step-by-step operations.
-- `gui` — launch legacy Tkinter graphical user interface.
+- `gui` — launch modern PyQt6 graphical user interface.
 
 ## v0.4.0 New Features
 
@@ -68,11 +68,11 @@ mm revert ./samples
 - **Troubleshooting**: Actionable guidance for common issues
 - **Validation**: Input validation with clear feedback
 
-## GUI Interfaces
+## GUI Interface (PyQt6)
 
-The Metadata Multitool includes both legacy and modern graphical interfaces:
+The Metadata Multitool provides a modern PyQt6 graphical interface:
 
-### 🎯 Modern PyQt6 GUI (Recommended)
+### 🎯 Modern PyQt6 GUI
 ```bash
 python src/metadata_multitool/gui_qt/main.py
 ```
@@ -87,24 +87,10 @@ python src/metadata_multitool/gui_qt/main.py
 - ✅ **Fixed Layout**: Professional layout with non-movable panels
 - ✅ **CLI Integration**: Full backend compatibility with existing CLI tools
 
-### Legacy Tkinter GUI
-```bash
-mm gui
-```
-
-**Features:**
-- **Mode Selection**: Basic switching between Clean, Poison, and Revert modes
-- **File Management**: Simple browse files/folders functionality
-- **Progress Tracking**: Basic progress bars and status updates
-- **Settings Panel**: Configure tool settings through the GUI
-
 ### Installation Requirements
 ```bash
 # For PyQt6 GUI (modern interface)
 pip install PyQt6
-
-# For Tkinter GUI (legacy - usually included with Python)
-# No additional installation required
 ```
 
 See `GUI_README.md` for detailed GUI documentation.

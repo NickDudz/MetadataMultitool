@@ -1,0 +1,337 @@
+name: Build Standalone Executables
+
+on:
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create GitHub release'
+        required: false
+        default: false
+        type: boolean
+      version_tag:
+        description: 'Version tag (e.g., v0.4.0)'
+        required: false
+        default: ''
+        type: string
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .[dev,gui]
+        pip install pyinstaller
+    
+    - name: Install ExifTool
+      run: |
+        choco install exiftool
+    
+    - name: Build CLI executable
+      run: |
+        pyinstaller build/pyinstaller_cli.spec --clean --noconfirm
+    
+    - name: Build GUI executable  
+      run: |
+        pyinstaller build/pyinstaller_gui.spec --clean --noconfirm
+    
+    - name: Test CLI executable
+      run: |
+        dist/metadata-multitool-cli/mm.exe --help
+    
+    - name: Test GUI executable (headless)
+      run: |
+        set QT_QPA_PLATFORM=offscreen
+        dist/metadata-multitool-gui/metadata-multitool-gui.exe --help
+      shell: cmd
+    
+    - name: Create Windows distribution archive
+      run: |
+        mkdir windows-distribution
+        xcopy dist\metadata-multitool-cli windows-distribution\cli\ /E /I
+        xcopy dist\metadata-multitool-gui windows-distribution\gui\ /E /I
+        echo @echo off > windows-distribution\run-cli.bat
+        echo cli\mm.exe %* >> windows-distribution\run-cli.bat
+        echo @echo off > windows-distribution\run-gui.bat
+        echo gui\metadata-multitool-gui.exe %* >> windows-distribution\run-gui.bat
+        copy README.md windows-distribution\
+        copy LICENSE windows-distribution\
+    
+    - name: Archive Windows distribution
+      run: |
+        Compress-Archive -Path windows-distribution\* -DestinationPath metadata-multitool-windows-x64.zip
+    
+    - name: Upload Windows artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-executables
+        path: |
+          metadata-multitool-windows-x64.zip
+          dist/metadata-multitool-cli/
+          dist/metadata-multitool-gui/
+
+  build-macos:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .[dev,gui]
+        pip install pyinstaller
+    
+    - name: Install ExifTool
+      run: |
+        brew install exiftool
+    
+    - name: Build CLI executable
+      run: |
+        pyinstaller build/pyinstaller_cli.spec --clean --noconfirm
+    
+    - name: Build GUI executable
+      run: |
+        pyinstaller build/pyinstaller_gui.spec --clean --noconfirm
+    
+    - name: Test CLI executable
+      run: |
+        dist/metadata-multitool-cli/mm --help
+    
+    - name: Test GUI executable (headless)
+      run: |
+        export QT_QPA_PLATFORM=offscreen
+        dist/MetadataMultitool.app/Contents/MacOS/metadata-multitool-gui --help
+    
+    - name: Create macOS distribution
+      run: |
+        mkdir -p macos-distribution
+        cp -r dist/metadata-multitool-cli macos-distribution/
+        cp -r dist/MetadataMultitool.app macos-distribution/
+        cp README.md LICENSE macos-distribution/
+        
+        # Create launcher scripts
+        cat > macos-distribution/run-cli.sh << 'EOF'
+        #!/bin/bash
+        cd "$(dirname "$0")"
+        ./metadata-multitool-cli/mm "$@"
+        EOF
+        chmod +x macos-distribution/run-cli.sh
+        
+        cat > macos-distribution/run-gui.sh << 'EOF'
+        #!/bin/bash
+        cd "$(dirname "$0")"
+        open MetadataMultitool.app
+        EOF
+        chmod +x macos-distribution/run-gui.sh
+    
+    - name: Create macOS archive
+      run: |
+        cd macos-distribution
+        tar -czf ../metadata-multitool-macos-x64.tar.gz *
+    
+    - name: Upload macOS artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-executables
+        path: |
+          metadata-multitool-macos-x64.tar.gz
+          dist/metadata-multitool-cli/
+          dist/MetadataMultitool.app/
+
+  build-linux:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libimage-exiftool-perl
+        sudo apt-get install -y qt6-base-dev qt6-tools-dev-tools
+        sudo apt-get install -y libegl1-mesa libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .[dev,gui]
+        pip install pyinstaller
+    
+    - name: Build CLI executable
+      run: |
+        pyinstaller build/pyinstaller_cli.spec --clean --noconfirm
+    
+    - name: Build GUI executable
+      run: |
+        export QT_QPA_PLATFORM=offscreen
+        pyinstaller build/pyinstaller_gui.spec --clean --noconfirm
+    
+    - name: Test CLI executable
+      run: |
+        dist/metadata-multitool-cli/mm --help
+    
+    - name: Test GUI executable (headless)
+      run: |
+        export QT_QPA_PLATFORM=offscreen
+        dist/metadata-multitool-gui/metadata-multitool-gui --help
+    
+    - name: Create Linux distribution
+      run: |
+        mkdir -p linux-distribution
+        cp -r dist/metadata-multitool-cli linux-distribution/
+        cp -r dist/metadata-multitool-gui linux-distribution/
+        cp README.md LICENSE linux-distribution/
+        
+        # Create launcher scripts
+        cat > linux-distribution/run-cli.sh << 'EOF'
+        #!/bin/bash
+        cd "$(dirname "$0")"
+        ./metadata-multitool-cli/mm "$@"
+        EOF
+        chmod +x linux-distribution/run-cli.sh
+        
+        cat > linux-distribution/run-gui.sh << 'EOF'
+        #!/bin/bash
+        cd "$(dirname "$0")"
+        ./metadata-multitool-gui/metadata-multitool-gui "$@"
+        EOF
+        chmod +x linux-distribution/run-gui.sh
+        
+        # Create desktop entry
+        cat > linux-distribution/metadata-multitool.desktop << 'EOF'
+        [Desktop Entry]
+        Version=1.0
+        Type=Application
+        Name=Metadata Multitool
+        Comment=Clean and manage image metadata
+        Exec=./run-gui.sh
+        Icon=image-x-generic
+        Terminal=false
+        Categories=Graphics;Photography;
+        MimeType=image/jpeg;image/png;image/tiff;
+        EOF
+    
+    - name: Create Linux archive
+      run: |
+        tar -czf metadata-multitool-linux-x64.tar.gz -C linux-distribution .
+    
+    - name: Upload Linux artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-executables
+        path: |
+          metadata-multitool-linux-x64.tar.gz
+          dist/metadata-multitool-cli/
+          dist/metadata-multitool-gui/
+
+  create-release:
+    needs: [build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') || github.event.inputs.create_release == 'true'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+    
+    - name: Determine version
+      id: version
+      run: |
+        if [ "${{ github.event.inputs.version_tag }}" != "" ]; then
+          echo "VERSION=${{ github.event.inputs.version_tag }}" >> $GITHUB_OUTPUT
+        elif [[ $GITHUB_REF == refs/tags/* ]]; then
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        else
+          echo "VERSION=v$(date +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.VERSION }}
+        release_name: Metadata Multitool ${{ steps.version.outputs.VERSION }}
+        body: |
+          ## Metadata Multitool Standalone Executables
+          
+          This release contains standalone executables for Windows, macOS, and Linux.
+          No Python installation required!
+          
+          ### Downloads
+          - **Windows**: `metadata-multitool-windows-x64.zip`
+          - **macOS**: `metadata-multitool-macos-x64.tar.gz`  
+          - **Linux**: `metadata-multitool-linux-x64.tar.gz`
+          
+          ### Quick Start
+          1. Download the archive for your platform
+          2. Extract the files
+          3. Run `run-cli.sh`/`run-cli.bat` for command line interface
+          4. Run `run-gui.sh`/`run-gui.bat` for graphical interface
+          
+          ### What's Included
+          - CLI executable (`mm` command)
+          - GUI executable (PyQt6 interface)
+          - ExifTool integration
+          - All dependencies bundled
+          
+          See the README for detailed usage instructions.
+        draft: false
+        prerelease: false
+    
+    - name: Upload Windows Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./windows-executables/metadata-multitool-windows-x64.zip
+        asset_name: metadata-multitool-windows-x64.zip
+        asset_content_type: application/zip
+    
+    - name: Upload macOS Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./macos-executables/metadata-multitool-macos-x64.tar.gz
+        asset_name: metadata-multitool-macos-x64.tar.gz
+        asset_content_type: application/gzip
+    
+    - name: Upload Linux Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./linux-executables/metadata-multitool-linux-x64.tar.gz
+        asset_name: metadata-multitool-linux-x64.tar.gz
+        asset_content_type: application/gzip

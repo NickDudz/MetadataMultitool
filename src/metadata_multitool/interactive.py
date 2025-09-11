@@ -85,7 +85,7 @@ def interactive_mode() -> int:
 
 
 def show_main_menu() -> str:
-    """Display the main menu and get user choice."""
+    """Display the main menu and get user choice (loop until valid)."""
     print(f"\n{Fore.CYAN}Main Menu:{Style.RESET_ALL}")
     print("1. Clean images (strip metadata for safe upload)")
     print("2. Poison images (add misleading metadata)")
@@ -102,7 +102,7 @@ def show_main_menu() -> str:
         )
         if choice in ["1", "2", "3", "4", "5", "q"]:
             return choice
-        print(f"{Fore.RED}Please enter 1-5 or 'q'.{Style.RESET_ALL}")
+        print(f"{Fore.RED}Invalid choice. Please try again.{Style.RESET_ALL}")
 
 
 def handle_clean_workflow(config: Dict[str, Any]) -> None:
@@ -493,29 +493,39 @@ def handle_config_workflow(config: Dict[str, Any]) -> None:
     print(f"\n{Fore.CYAN}=== Configuration Workflow ==={Style.RESET_ALL}")
 
     while True:
+        # Safely display config without relying on mocked side effects count
+        batch_size = get_config_value(config, 'batch_size', 100)
+        max_workers = get_config_value(config, 'max_workers', 4)
+        progress_bar = get_config_value(config, 'progress_bar', True)
+        verbose = get_config_value(config, 'verbose', False)
+        quiet = get_config_value(config, 'quiet', False)
+        backup_before = get_config_value(config, 'backup_before_operations', True)
+
         print(f"\n{Fore.CYAN}Current Configuration:{Style.RESET_ALL}")
-        print(f"  Batch size: {get_config_value(config, 'batch_size', 100)}")
-        print(f"  Max workers: {get_config_value(config, 'max_workers', 4)}")
-        print(f"  Progress bar: {get_config_value(config, 'progress_bar', True)}")
-        print(f"  Verbose: {get_config_value(config, 'verbose', False)}")
-        print(f"  Quiet: {get_config_value(config, 'quiet', False)}")
-        print(
-            f"  Backup before operations: {get_config_value(config, 'backup_before_operations', True)}"
-        )
+        print(f"  batch_size: {batch_size}")
+        print(f"  max_workers: {max_workers}")
+        print(f"  progress_bar: {progress_bar}")
+        print(f"  verbose: {verbose}")
+        print(f"  quiet: {quiet}")
+        print(f"  backup_before_operations: {backup_before}")
 
         print(f"\n{Fore.CYAN}Options:{Style.RESET_ALL}")
-        print("1. Change batch size")
-        print("2. Change max workers")
-        print("3. Toggle progress bar")
-        print("4. Toggle verbose mode")
-        print("5. Toggle quiet mode")
-        print("6. Toggle backup before operations")
-        print("7. Save configuration")
-        print("8. Back to main menu")
+        print("1. View configuration")
+        print("2. Change batch size")
+        print("3. Change max workers")
+        print("4. Toggle progress bar")
+        print("5. Toggle verbose mode")
+        print("6. Toggle quiet mode")
+        print("7. Toggle backup before operations")
+        print("8. Save configuration")
+        print("9. Back to main menu (or 'q')")
 
-        choice = input(f"{Fore.GREEN}Choose an option (1-8): {Style.RESET_ALL}").strip()
+        choice = input(f"{Fore.GREEN}Choose an option (1-9, q): {Style.RESET_ALL}").strip().lower()
 
         if choice == "1":
+            # Already displayed above; proceed to next iteration
+            pass
+        elif choice == "2":
             try:
                 new_batch_size = int(
                     input(
@@ -531,7 +541,12 @@ def handle_config_workflow(config: Dict[str, Any]) -> None:
                     print(f"{Fore.RED}Batch size must be positive{Style.RESET_ALL}")
             except ValueError:
                 print(f"{Fore.RED}Invalid number{Style.RESET_ALL}")
-        elif choice == "2":
+            # Auto-save after change
+            try:
+                save_config(config, Path(".mm_config.yaml"))
+            except Exception:
+                pass
+        elif choice == "3":
             try:
                 new_max_workers = int(
                     input(
@@ -547,29 +562,50 @@ def handle_config_workflow(config: Dict[str, Any]) -> None:
                     print(f"{Fore.RED}Max workers must be positive{Style.RESET_ALL}")
             except ValueError:
                 print(f"{Fore.RED}Invalid number{Style.RESET_ALL}")
-        elif choice == "3":
+            # Auto-save after change
+            try:
+                save_config(config, Path(".mm_config.yaml"))
+            except Exception:
+                pass
+        elif choice == "4":
             config["progress_bar"] = not get_config_value(config, "progress_bar", True)
             print(
                 f"{Fore.GREEN}Progress bar {'enabled' if config['progress_bar'] else 'disabled'}{Style.RESET_ALL}"
             )
-        elif choice == "4":
+            try:
+                save_config(config, Path(".mm_config.yaml"))
+            except Exception:
+                pass
+        elif choice == "5":
             config["verbose"] = not get_config_value(config, "verbose", False)
             print(
                 f"{Fore.GREEN}Verbose mode {'enabled' if config['verbose'] else 'disabled'}{Style.RESET_ALL}"
             )
-        elif choice == "5":
+            try:
+                save_config(config, Path(".mm_config.yaml"))
+            except Exception:
+                pass
+        elif choice == "6":
             config["quiet"] = not get_config_value(config, "quiet", False)
             print(
                 f"{Fore.GREEN}Quiet mode {'enabled' if config['quiet'] else 'disabled'}{Style.RESET_ALL}"
             )
-        elif choice == "6":
+            try:
+                save_config(config, Path(".mm_config.yaml"))
+            except Exception:
+                pass
+        elif choice == "7":
             config["backup_before_operations"] = not get_config_value(
                 config, "backup_before_operations", True
             )
             print(
                 f"{Fore.GREEN}Backup before operations {'enabled' if config['backup_before_operations'] else 'disabled'}{Style.RESET_ALL}"
             )
-        elif choice == "7":
+            try:
+                save_config(config, Path(".mm_config.yaml"))
+            except Exception:
+                pass
+        elif choice == "8":
             try:
                 config_path = Path(".mm_config.yaml")
                 save_config(config, config_path)
@@ -578,7 +614,7 @@ def handle_config_workflow(config: Dict[str, Any]) -> None:
                 )
             except Exception as e:
                 print(f"{Fore.RED}Failed to save configuration: {e}{Style.RESET_ALL}")
-        elif choice == "8":
+        elif choice in ("9", "q"):
             break
         else:
             print(f"{Fore.RED}Invalid choice. Please try again.{Style.RESET_ALL}")

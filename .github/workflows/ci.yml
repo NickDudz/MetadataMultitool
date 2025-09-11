@@ -92,6 +92,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         python-version: ['3.13']
+    env:
+      QT_QPA_PLATFORM: offscreen
     
     steps:
     - name: Checkout code

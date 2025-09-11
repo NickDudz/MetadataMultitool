@@ -1,6 +1,6 @@
 # Metadata Multitool GUI
 
-Graphical user interfaces for the Metadata Multitool, featuring both modern PyQt6 and legacy Tkinter implementations.
+Graphical user interface for the Metadata Multitool, implemented with modern PyQt6.
 
 ## Features
 
@@ -57,20 +57,7 @@ mm-gui
 - QThread for background operations
 - QSS styling for modern appearance
 
-### 2. Legacy Tkinter GUI
-
-**Status**: Functional but deprecated
-
-**Features**:
-- Basic file selection and processing
-- Simple progress tracking
-- Configuration management
-- Cross-platform compatibility
-
-**Launch**:
-```bash
-mm gui
-```
+<!-- Legacy Tkinter GUI has been removed as of v0.4.x. -->
 
 ## Configuration
 
