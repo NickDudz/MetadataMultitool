@@ -7,7 +7,6 @@ bottlenecks and regressions in processing large file sets.
 
 import tempfile
 import time
-import psutil
 import statistics
 from pathlib import Path
 from typing import Dict, List, Tuple, Any
@@ -15,6 +14,12 @@ import pytest
 from PIL import Image
 import sys
 import os
+
+try:
+    import psutil  # type: ignore
+except Exception:  # pragma: no cover - optional dependency missing
+    psutil = None
+    pytestmark = pytest.mark.skip(reason="psutil not installed")
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))

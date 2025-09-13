@@ -96,3 +96,38 @@ def strip_all_metadata(img: Path) -> None:
             im_noexif = Image.new(im.mode, im.size)
             im_noexif.putdata(data)
             im_noexif.save(img)
+
+
+def get_file_metadata(file_path: Path) -> Dict[str, Any]:
+    """Return metadata for a file using ExifTool when available.
+
+    Args:
+        file_path: Path to the image file.
+
+    Returns:
+        A dictionary of metadata fields and values. Returns an empty
+        dictionary when ExifTool is unavailable or metadata cannot be read.
+    """
+    if not has_exiftool():
+        return {}
+
+    try:
+        result = subprocess.run(
+            ["exiftool", "-json", str(file_path)],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        if not result.stdout.strip():
+            return {}
+
+        data = json.loads(result.stdout)
+        if not data or not isinstance(data, list):
+            return {}
+
+        metadata = dict(data[0])
+        metadata.pop("SourceFile", None)
+        metadata.pop("ExifToolVersion", None)
+        return metadata
+    except (subprocess.CalledProcessError, json.JSONDecodeError, IndexError, KeyError):
+        return {}

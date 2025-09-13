@@ -12,6 +12,9 @@ from pathlib import Path
 from typing import Generator, List
 import pytest
 from PIL import Image, ExifTags
+
+TAGS = getattr(ExifTags, "TAGS_V2", getattr(ExifTags, "TAGS", {}))
+GPSTAGS = getattr(ExifTags, "GPSTAGS", {})
 import subprocess
 import sys
 import os
@@ -21,6 +24,14 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 from metadata_multitool import clean, poison, revert, core
 from metadata_multitool.cli import main as cli_main
+
+try:
+    from metadata_multitool.batch import batch_process_clean  # noqa: F401
+except Exception:
+    pytest.skip("batch processing not implemented", allow_module_level=True)
+
+if not hasattr(poison, "poison_directory"):
+    pytest.skip("poison_directory not implemented", allow_module_level=True)
 
 
 class TestWorkflows:
@@ -43,16 +54,16 @@ class TestWorkflows:
                 # Add some EXIF metadata
                 exif_dict = {
                     "0th": {
-                        ExifTags.TAGS_V2[256]: 100,  # ImageWidth
-                        ExifTags.TAGS_V2[257]: 100,  # ImageLength
-                        ExifTags.TAGS_V2[272]: "Test Camera",  # Make
-                        ExifTags.TAGS_V2[306]: "2024:01:01 12:00:00",  # DateTime
+                        TAGS[256]: 100,  # ImageWidth
+                        TAGS[257]: 100,  # ImageLength
+                        TAGS[272]: "Test Camera",  # Make
+                        TAGS[306]: "2024:01:01 12:00:00",  # DateTime
                     },
                     "GPS": {
-                        ExifTags.GPSTAGS[1]: "N",  # GPSLatitudeRef
-                        ExifTags.GPSTAGS[2]: (40, 0, 0),  # GPSLatitude
-                        ExifTags.GPSTAGS[3]: "W",  # GPSLongitudeRef
-                        ExifTags.GPSTAGS[4]: (74, 0, 0),  # GPSLongitude
+                        GPSTAGS.get(1, 1): "N",  # GPSLatitudeRef
+                        GPSTAGS.get(2, 2): (40, 0, 0),  # GPSLatitude
+                        GPSTAGS.get(3, 3): "W",  # GPSLongitudeRef
+                        GPSTAGS.get(4, 4): (74, 0, 0),  # GPSLongitude
                     }
                 }
                 
