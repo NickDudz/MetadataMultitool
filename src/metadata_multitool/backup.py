@@ -31,6 +31,8 @@ class BackupManager:
         self.backup_dir.mkdir(parents=True, exist_ok=True)
         self.backup_index_file = self.backup_dir / "backup_index.json"
         self.backup_index = self._load_backup_index()
+        if backup_dir is None and not self.backup_index_file.exists():
+            self._save_backup_index()
 
     def _load_backup_index(self) -> Dict[str, Any]:
         """Load the backup index from file."""

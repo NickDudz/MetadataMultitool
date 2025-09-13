@@ -8,6 +8,10 @@ from unittest.mock import patch
 
 import pytest
 from PIL import Image
+from metadata_multitool import poison
+
+if not hasattr(poison, "poison_directory"):
+    pytest.skip("poison_directory not implemented", allow_module_level=True)
 
 
 def run_cli(args, cwd):

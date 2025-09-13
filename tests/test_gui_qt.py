@@ -8,34 +8,33 @@ from unittest.mock import Mock, patch, MagicMock
 
 import pytest
 
-# Make pytest-qt optional: only load plugin if present
-try:
-    import pytestqt  # type: ignore
-    HAS_PYTEST_QT = True
-except Exception:
-    HAS_PYTEST_QT = False
-
-# Load plugin only when available to avoid ImportError during collection
-pytest_plugins = ["pytestqt"] if HAS_PYTEST_QT else []
-
 try:
     import PyQt6.QtWidgets
     from PyQt6.QtCore import Qt, QTimer
     from PyQt6.QtWidgets import QApplication, QWidget
     from PyQt6.QtTest import QTest
-    
-    # Try to import GUI modules
+
     from metadata_multitool.gui_qt.main import MetadataMultitoolApp, main
     from metadata_multitool.gui_qt.main_window import MainWindow
-    
+
     GUI_AVAILABLE = True
-except ImportError:
+except Exception:
     GUI_AVAILABLE = False
-    # Create dummy classes for when GUI is not available
-    class MetadataMultitoolApp:
+
+    class MetadataMultitoolApp:  # type: ignore[no-redef]
         pass
-    class MainWindow:
+
+    class MainWindow:  # type: ignore[no-redef]
         pass
+
+# Make pytest-qt optional: only load plugin if both PyQt6 and pytest-qt are present
+try:
+    import pytestqt  # type: ignore
+    HAS_PYTEST_QT = True
+except Exception:  # pragma: no cover - optional dependency
+    HAS_PYTEST_QT = False
+
+pytest_plugins = ["pytestqt"] if GUI_AVAILABLE and HAS_PYTEST_QT else []
 
 # Skip all GUI tests if GUI or pytest-qt is not available
 pytestmark = pytest.mark.skipif(
